@@ -1,43 +1,52 @@
 @import "tailwindcss";
 
-
 @custom-variant dark (&:where(.dark, .dark *));
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
-
+/* ===== BASE COLORS ===== */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --bg: 0 0% 100%; /* oq */
+    --fg: 0 0% 0%; /* qora */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --bg: 0 0% 0%; /* qora */
+    --fg: 0 0% 100%; /* oq */
+  }
+
+  body {
+    background-color: hsl(var(--bg));
+    color: hsl(var(--fg));
   }
 }
 
-/* Smooth transitions */
+/* Smooth transition */
 * {
   @apply transition-colors duration-200;
 }
 
-/* Custom scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  @apply w-2;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-zinc-100 dark:bg-zinc-900;
+  background: white;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: black;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-zinc-300 dark:bg-zinc-700;
+  background: #999;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-zinc-400 dark:bg-zinc-600;
+.dark ::-webkit-scrollbar-thumb {
+  background: #444;
 }

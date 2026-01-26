@@ -56,7 +56,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="p-6 bg-gray-900 min-h-screen">
+    <div className="p-6  min-h-screen">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
           <SettingsIcon className="w-8 h-8" /> Sozlamalar
@@ -74,77 +74,67 @@ export default function Settings() {
         {/* Main Settings */}
         <div className="lg:col-span-2 space-y-6">
           {/* Company Settings */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <div className=" rounded-lg border border-slate-300 p-6">
+            <h2 className=" font-semibold mb-4 flex items-center gap-2">
               <Database className="w-5 h-5" /> Kompaniya Ma'lumotlari
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-300 text-sm mb-2">
-                  Kompaniya Nomi
-                </label>
+                <label className="block  text-sm mb-2">Kompaniya Nomi</label>
                 <input
                   type="text"
                   name="companyName"
                   value={settings.companyName}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-700 border border-slate-600 rounded px-4 py-2 text-white"
+                  className="w-full  border border-slate-300 rounded px-4 py-2 "
                 />
               </div>
               <div>
-                <label className="block text-slate-300 text-sm mb-2">
-                  Telefon
-                </label>
+                <label className="block  text-sm mb-2">Telefon</label>
                 <input
                   type="tel"
                   name="phone"
                   value={settings.phone}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-700 border border-slate-600 rounded px-4 py-2 text-white"
+                  className="w-full border border-slate-300 rounded px-4 py-2 "
                 />
               </div>
               <div>
-                <label className="block text-slate-300 text-sm mb-2">
-                  Manzil
-                </label>
+                <label className="block  text-sm mb-2">Manzil</label>
                 <input
                   type="text"
                   name="address"
                   value={settings.address}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-700 border border-slate-600 rounded px-4 py-2 text-white"
+                  className="w-full border border-slate-300 rounded px-4 py-2"
                 />
               </div>
             </div>
           </div>
 
           {/* Account Settings */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <div className=" rounded-lg border border-slate-300 p-6">
+            <h2 className=" font-semibold mb-4 flex items-center gap-2">
               <User className="w-5 h-5" /> Hisob Ma'lumotlari
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-300 text-sm mb-2">
-                  Email
-                </label>
+                <label className="block text-sm mb-2">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={settings.email}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-700 border border-slate-600 rounded px-4 py-2 text-white"
+                  className="w-full border border-slate-300 rounded px-4 py-2"
                 />
               </div>
               <div>
-                <label className="block text-slate-300 text-sm mb-2">
-                  Tilni Tanlang
-                </label>
+                <label className="block  text-sm mb-2">Tilni Tanlang</label>
                 <select
                   name="language"
                   value={settings.language}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-700 border border-slate-600 rounded px-4 py-2 text-white"
+                  className="w-full  border border-slate-300 rounded px-4 py-2 "
                 >
                   <option value="uz">O'zbek</option>
                   <option value="ru">Ruscha</option>
@@ -152,14 +142,12 @@ export default function Settings() {
                 </select>
               </div>
               <div>
-                <label className="block text-slate-300 text-sm mb-2">
-                  Vaqt Zone
-                </label>
+                <label className="block text-sm mb-2">Vaqt Zone</label>
                 <select
                   name="timezone"
                   value={settings.timezone}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-700 border border-slate-600 rounded px-4 py-2 text-white"
+                  className="w-ful border border-slate-300 rounded px-4 py-2"
                 >
                   <option value="UTC+5">UTC+5 (Tashkent)</option>
                   <option value="UTC+6">UTC+6</option>
@@ -169,28 +157,26 @@ export default function Settings() {
           </div>
 
           {/* Password Settings */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <div className=" rounded-lg border border-slate-300 p-6">
+            <h2 className="font-semibold mb-4 flex items-center gap-2">
               <Lock className="w-5 h-5" /> Parol O'zgartirish
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-300 text-sm mb-2">
-                  Yangi Parol
-                </label>
+                <label className="block text-sm mb-2">Yangi Parol</label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Yangi parol kiriting"
-                    className="w-full bg-slate-700 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500"
+                    className="w-full border border-slate-300 rounded px-4 py-2  placeholder-slate-500"
                   />
                   <button
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300"
                   >
-                    {showPassword ? "👁" : "👁‍🗨"}
+                    {showPassword ? "👁" : "👁"}
                   </button>
                 </div>
               </div>
@@ -207,8 +193,8 @@ export default function Settings() {
         {/* Sidebar Settings */}
         <div className="space-y-6">
           {/* Preferences */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <div className=" rounded-lg border border-slate-300 p-6">
+            <h2 className="font-semibold mb-4 flex items-center gap-2">
               <Bell className="w-5 h-5" /> Sozlamalar
             </h2>
             <div className="space-y-4">
@@ -220,7 +206,7 @@ export default function Settings() {
                   onChange={handleInputChange}
                   className="w-4 h-4"
                 />
-                <span className="text-slate-300">Bildirishnomalar</span>
+                <span>Bildirishnomalar</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
@@ -230,7 +216,7 @@ export default function Settings() {
                   onChange={handleInputChange}
                   className="w-4 h-4"
                 />
-                <span className="text-slate-300">Qora rejimi</span>
+                <span>Qora rejimi</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
@@ -240,7 +226,7 @@ export default function Settings() {
                   onChange={handleInputChange}
                   className="w-4 h-4"
                 />
-                <span className="text-slate-300">Avtomatik zaxira</span>
+                <span>Avtomatik zaxira</span>
               </label>
             </div>
           </div>

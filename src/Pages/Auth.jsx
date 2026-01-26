@@ -2,360 +2,231 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, User, Eye, EyeOff, Smartphone } from "lucide-react";
 
+const EMPTY_FORM = {
+  email: "",
+  password: "",
+  name: "",
+  confirmPassword: "",
+};
+
 export default function Auth() {
   const navigate = useNavigate();
+
   const [authState, setAuthState] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    name: "",
-    confirmPassword: "",
-  });
-
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // ✅ localStorage'dan users olish
-  const getUsers = () => {
-    const stored = localStorage.getItem("users");
-    return stored
-      ? JSON.parse(stored)
-      : [
-          {
-            id: 1,
-            email: "admin@admin.com",
-            password: "admin123",
-            name: "Admin",
-          },
-        ];
-  };
+  /* ---------- USERS ---------- */
+  const getUsers = () =>
+    JSON.parse(localStorage.getItem("users")) || [
+      {
+        id: 1,
+        email: "admin@admin.com",
+        password: "admin123",
+        name: "Admin",
+      },
+    ];
 
-  // ✅ localStorage'ga users saqlash
-  const saveUsers = (users) => {
+  const saveUsers = (users) =>
     localStorage.setItem("users", JSON.stringify(users));
-  };
 
+  /* ---------- HANDLERS ---------- */
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
   };
 
-  const handleLogin = async (e) => {
+  const resetForm = () => {
+    setFormData(EMPTY_FORM);
+    setError("");
+    setSuccess("");
+  };
+
+  const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
+    const users = getUsers();
+    const user = users.find(
+      (u) => u.email === formData.email && u.password === formData.password
+    );
 
-      const users = getUsers();
-      const user = users.find(
-        (u) => u.email === formData.email && u.password === formData.password
-      );
-
-      if (user) {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("currentUser", JSON.stringify(user));
-
-        setSuccess("Muvaffaqiyatli kirildi!");
-        setFormData({ email: "", password: "", name: "", confirmPassword: "" });
-
-        setTimeout(() => navigate("/"), 1000);
-      } else {
-        setError("Email yoki parol noto'g'ri!");
-      }
-    } catch (err) {
-      setError("Xatolik yuz berdi!");
-    } finally {
+    if (!user) {
+      setError("Email yoki parol noto'g'ri!");
       setLoading(false);
+      return;
     }
+
+    localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("currentUser", JSON.stringify(user));
+
+    setSuccess("Muvaffaqiyatli kirildi!");
+    resetForm();
+
+    setTimeout(() => navigate("/"), 800);
+    setLoading(false);
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
-    try {
-      if (
-        !formData.name ||
-        !formData.email ||
-        !formData.password ||
-        !formData.confirmPassword
-      ) {
-        setError("Barcha maydonlarni to'ldiring!");
-        setLoading(false);
-        return;
-      }
+    const { name, email, password, confirmPassword } = formData;
 
-      if (formData.password !== formData.confirmPassword) {
-        setError("Parollar mos kelmaydi!");
-        setLoading(false);
-        return;
-      }
-
-      if (formData.password.length < 6) {
-        setError("Parol kamita 6 ta belgidan iborat bo'lishi kerak!");
-        setLoading(false);
-        return;
-      }
-
-      const users = getUsers();
-      if (users.find((u) => u.email === formData.email)) {
-        setError("Bu email allaqachon ro'yxatdan o'tgan!");
-        setLoading(false);
-        return;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      const newUser = {
-        id: users.length + 1,
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-      };
-
-      saveUsers([...users, newUser]);
-
-      setSuccess("Ro'yxatdan o'tish muvaffaqiyatli! Endi login qiling.");
-      setTimeout(() => {
-        setAuthState("login");
-        setFormData({ email: "", password: "", name: "", confirmPassword: "" });
-        setSuccess("");
-      }, 2000);
-    } catch (err) {
-      setError("Ro'yxatdan o'tishda xatolik!");
-    } finally {
+    if (!name || !email || !password || !confirmPassword) {
+      setError("Barcha maydonlarni to'ldiring!");
       setLoading(false);
+      return;
     }
+
+    if (password !== confirmPassword) {
+      setError("Parollar mos kelmaydi!");
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Parol kamida 6 ta belgidan iborat bo'lishi kerak!");
+      setLoading(false);
+      return;
+    }
+
+    const users = getUsers();
+    if (users.some((u) => u.email === email)) {
+      setError("Bu email allaqachon mavjud!");
+      setLoading(false);
+      return;
+    }
+
+    saveUsers([...users, { id: users.length + 1, name, email, password }]);
+
+    setSuccess("Ro'yxatdan o'tildi! Endi login qiling.");
+    setTimeout(() => {
+      setAuthState("login");
+      resetForm();
+    }, 1500);
+
+    setLoading(false);
   };
 
+  /* ---------- UI ---------- */
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* HEADER */}
         <div className="text-center mb-8">
           <div className="inline-block bg-blue-600 p-3 rounded-lg mb-4">
             <Smartphone className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white">Telefon Admin</h1>
-          <p className="text-slate-400 mt-2">
-            Telefon sotish uchun admin panel
-          </p>
+          <p className="text-slate-400 mt-2">Telefon sotish admin paneli</p>
         </div>
 
-        <div className="bg-slate-800 rounded-lg border border-slate-700 p-8">
+        {/* CARD */}
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-8">
+          {/* TABS */}
           <div className="flex gap-4 mb-8">
-            <button
-              onClick={() => {
-                setAuthState("login");
-                setFormData({
-                  email: "",
-                  password: "",
-                  name: "",
-                  confirmPassword: "",
-                });
-                setError("");
-              }}
-              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
-                authState === "login"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-              }`}
-            >
-              Kirish
-            </button>
-            <button
-              onClick={() => {
-                setAuthState("register");
-                setFormData({
-                  email: "",
-                  password: "",
-                  name: "",
-                  confirmPassword: "",
-                });
-                setError("");
-              }}
-              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
-                authState === "register"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-              }`}
-            >
-              Ro'yxat
-            </button>
+            {["login", "register"].map((t) => (
+              <button
+                key={t}
+                onClick={() => {
+                  setAuthState(t);
+                  resetForm();
+                }}
+                className={`flex-1 py-2 rounded-lg font-semibold transition ${
+                  authState === t
+                    ? "bg-blue-600 text-white"
+                    : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                }`}
+              >
+                {t === "login" ? "Kirish" : "Ro'yxat"}
+              </button>
+            ))}
           </div>
 
+          {/* ALERTS */}
           {error && (
-            <div className="bg-red-500/20 border border-red-500 text-red-300 p-3 rounded-lg mb-4 text-sm">
+            <div className="mb-4 p-3 rounded-lg text-sm bg-red-500/20 text-red-300 border border-red-500">
               {error}
             </div>
           )}
           {success && (
-            <div className="bg-green-500/20 border border-green-500 text-green-300 p-3 rounded-lg mb-4 text-sm">
+            <div className="mb-4 p-3 rounded-lg text-sm bg-green-500/20 text-green-300 border border-green-500">
               {success}
             </div>
           )}
 
+          {/* LOGIN */}
           {authState === "login" && (
             <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Email
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="admin@admin.com"
-                    className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-              </div>
+              <Input
+                icon={Mail}
+                name="email"
+                type="email"
+                placeholder="admin@admin.com"
+                value={formData.email}
+                onChange={handleInputChange}
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Parol
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="admin123"
-                    className="w-full pl-10 pr-10 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
+              <PasswordInput
+                value={formData.password}
+                onChange={handleInputChange}
+                show={showPassword}
+                toggle={() => setShowPassword(!showPassword)}
+              />
 
               <button
-                type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-semibold py-2 px-4 rounded-lg transition mt-6"
+                className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-semibold text-white"
               >
                 {loading ? "Kuting..." : "Kirish"}
               </button>
 
-              <p className="text-sm text-slate-400 text-center mt-4">
-                Test uchun: admin@admin.com / admin123
+              <p className="text-xs text-slate-400 text-center">
+                admin@admin.com / admin123
               </p>
             </form>
           )}
 
+          {/* REGISTER */}
           {authState === "register" && (
             <form onSubmit={handleRegister} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Ism
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Ismingiz"
-                    className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Email
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="email@example.com"
-                    className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Parol
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="Parolingiz"
-                    className="w-full pl-10 pr-10 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Parolni qayta kiriting
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    placeholder="Parolingiz"
-                    className="w-full pl-10 pr-10 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                    required
-                  />
-                </div>
-              </div>
+              <Input
+                icon={User}
+                name="name"
+                placeholder="Ismingiz"
+                value={formData.name}
+                onChange={handleInputChange}
+              />
+              <Input
+                icon={Mail}
+                name="email"
+                type="email"
+                placeholder="email@example.com"
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+              <PasswordInput
+                value={formData.password}
+                onChange={handleInputChange}
+                show={showPassword}
+                toggle={() => setShowPassword(!showPassword)}
+              />
+              <PasswordInput
+                name="confirmPassword"
+                placeholder="Parolni qayta kiriting"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                show={showPassword}
+              />
 
               <button
-                type="submit"
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white font-semibold py-2 px-4 rounded-lg transition mt-6"
+                className="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg font-semibold text-white"
               >
                 {loading ? "Kuting..." : "Ro'yxatdan o'tish"}
               </button>
@@ -364,9 +235,56 @@ export default function Auth() {
         </div>
 
         <p className="text-center text-slate-500 text-sm mt-6">
-          © 2024 Telefon Admin Panel. Barcha huquqlar himoyalangan.
+          © 2024 Telefon Admin Panel
         </p>
       </div>
+    </div>
+  );
+}
+
+/* ---------- SMALL COMPONENTS ---------- */
+function Input({ icon: Icon, ...props }) {
+  return (
+    <div className="relative">
+      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+      <input
+        {...props}
+        className="w-full  pl-10 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-blue-500 outline-none"
+        required
+      />
+    </div>
+  );
+}
+
+function PasswordInput({
+  name = "password",
+  value,
+  onChange,
+  show,
+  toggle,
+  placeholder = "Parol",
+}) {
+  return (
+    <div className="relative">
+      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+      <input
+        type={show ? "text" : "password"}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="w-full pl-10 pr-10 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-blue-500 outline-none"
+        required
+      />
+      {toggle && (
+        <button
+          type="button"
+          onClick={toggle}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+        >
+          {show ? <EyeOff /> : <Eye />}
+        </button>
+      )}
     </div>
   );
 }

@@ -103,7 +103,7 @@ export default function TopSelling() {
   ).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 p-4 md:p-8">
+    <div className="min-h-screen bg-linear-to-br p-4 md:p-8">
       {/* Header Section */}
       <div className="mb-8 animate-fadeIn">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -113,22 +113,14 @@ export default function TopSelling() {
                 <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                <h1 className="text-2xl md:text-3xl font-bold bg-linear-to-r ">
                   Eng Ko'p Sotilayotgan Telefonlar
                 </h1>
-                <p className="text-slate-400 text-sm md:text-base mt-1">
-                  Real vaqtda monitoring va statistik tahlillar
-                </p>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-sm text-blue-400 cursor-pointer hover:text-blue-300 transition-colors">
-            <span>Batafsil hisobot</span>
-            <ChevronRight className="w-4 h-4" />
-          </div>
         </div>
       </div>
-
       {/* Stats Cards with Hover Effects */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
@@ -167,7 +159,7 @@ export default function TopSelling() {
         ].map((stat, index) => (
           <div
             key={index}
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 p-6 hover:border-gray-600 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-gray-900/50"
+            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br  p-6  transition-all duration-300 hover:scale-[1.02]"
           >
             <div
               className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-300"
@@ -181,8 +173,8 @@ export default function TopSelling() {
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <p className="text-slate-400 text-sm mb-1">{stat.title}</p>
-                  <p className="text-2xl md:text-3xl font-bold text-white">
+                  <p className=" text-sm mb-1">{stat.title}</p>
+                  <p className="text-2xl md:text-3xl font-bold ">
                     {stat.value}
                   </p>
                   <div className="flex items-center gap-1 mt-2">
@@ -208,8 +200,8 @@ export default function TopSelling() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Monthly Sales Chart */}
-        <div className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6 hover:border-gray-600 transition-all duration-300">
-          <div className="absolute -top-3 left-6 px-4 py-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full text-sm font-semibold text-white flex items-center gap-2">
+        <div className="group relative bg-gradient-to-br  backdrop-blur-sm rounded-2xlp-6  transition-all duration-300">
+          <div className="absolute -top-3 left-6 px-4 py-1 bg-gradient-to-r from-blue-500 to-cyan-900 rounded-full text-sm font-semibold text-white flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
             Oylik Sotuvlar Trendi
           </div>
@@ -230,8 +222,7 @@ export default function TopSelling() {
                 <YAxis stroke="#9CA3AF" axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "rgba(17, 24, 39, 0.9)",
-                    backdropFilter: "blur(8px)",
+                    backgroundColor: "white dark:black",
                     border: "1px solid rgba(75, 85, 99, 0.5)",
                     borderRadius: "12px",
                     boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
@@ -255,9 +246,8 @@ export default function TopSelling() {
             </ResponsiveContainer>
           </div>
         </div>
-
         {/* Brand Distribution */}
-        <div className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700 p-6 hover:border-gray-600 transition-all duration-300">
+        <div className="group relative bg-gradient-to-br  backdrop-blur-sm rounded-2xl   p-6  transition-all duration-300">
           <div className="absolute -top-3 left-6 px-4 py-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-sm font-semibold text-white flex items-center gap-2">
             <PieChartIcon className="w-4 h-4" />
             Brend Bo'yicha Taqsimot
@@ -318,14 +308,14 @@ export default function TopSelling() {
       </div>
 
       {/* Top Products Table */}
-      <div className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700 overflow-hidden hover:border-gray-600 transition-all duration-300">
-        <div className="absolute -top-3 left-6 px-4 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-sm font-semibold text-white flex items-center gap-2">
+      <div className="group relative bg-gradient-to-br backdrop-blur-sm rounded-2xl overflow-hidden hover:border-gray-600 transition-all duration-300">
+        <div className="absolute top-2   left-6 px-4 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-sm font-semibold text-white flex items-center gap-2">
           <Award className="w-4 h-4" />
           Eng Ko'p Sotilayotgan Modellar
         </div>
 
         <div className="px-6 pt-8 pb-4">
-          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-sm font-medium text-slate-400 border-b border-gray-700">
+          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-sm font-medium ">
             <div className="col-span-1">#</div>
             <div className="col-span-3">Model</div>
             <div className="col-span-2">Brend</div>
@@ -338,7 +328,7 @@ export default function TopSelling() {
             {topPhones.map((phone, index) => (
               <div
                 key={phone.id}
-                className="group/item grid grid-cols-12 gap-4 px-4 py-4 rounded-xl hover:bg-gray-800/50 transition-all duration-300 hover:scale-[1.01]"
+                className="group/item grid grid-cols-12 gap-4 px-4 py-4 rounded-xl cursor-pointer hover-lift shadow-glow"
               >
                 <div className="col-span-1 flex items-center">
                   <div className="relative">
@@ -355,11 +345,11 @@ export default function TopSelling() {
                     >
                       <span className="text-lg font-bold">
                         {index === 0
-                          ? "🥇"
+                          ? "1"
                           : index === 1
-                          ? "🥈"
+                          ? "2"
                           : index === 2
-                          ? "🥉"
+                          ? "3"
                           : index + 1}
                       </span>
                     </div>
@@ -367,12 +357,12 @@ export default function TopSelling() {
                 </div>
 
                 <div className="col-span-3 flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center text-2xl">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br  flex items-center justify-center text-2xl">
                     {phone.image}
                   </div>
                   <div>
-                    <div className="font-semibold text-white">{phone.name}</div>
-                    <div className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                    <div className="font-semibold">{phone.name}</div>
+                    <div className="flex items-center gap-1 mt-1">
                       <Zap className="w-3 h-3 text-amber-500" />
                       <span className="text-emerald-400">{phone.growth}</span>
                     </div>
@@ -380,10 +370,8 @@ export default function TopSelling() {
                 </div>
 
                 <div className="col-span-2 flex items-center">
-                  <div className="px-3 py-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-                    <span className="text-slate-300 font-medium">
-                      {phone.brand}
-                    </span>
+                  <div className="px-3 py-1.5 rounded-lg  border border-gray-700">
+                    <span className=" font-medium">{phone.brand}</span>
                   </div>
                 </div>
 
@@ -409,7 +397,7 @@ export default function TopSelling() {
                           className={`w-4 h-4 ${
                             i < Math.floor(phone.rating)
                               ? "fill-amber-500 text-amber-500"
-                              : "fill-gray-700 text-gray-600"
+                              : "fill-gray-700 text-black-600"
                           }`}
                         />
                       ))}
@@ -424,16 +412,6 @@ export default function TopSelling() {
           </div>
         </div>
       </div>
-
-      {/* Footer Stats */}
-      <div className="mt-8 text-center text-sm text-slate-500">
-        <p>
-          Oxirgi yangilanish: bugun 15:30 • Ma'lumotlar haqiqiyligi: 99.9% •{" "}
-        </p>
-        <p className="mt-1">© 2024 SmartPhone Analytics Dashboard</p>
-      </div>
-
-      {/* Custom Animations */}
       <style jsx>{`
         @keyframes fadeIn {
           from {

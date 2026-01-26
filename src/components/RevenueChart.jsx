@@ -12,18 +12,15 @@ function CustomTooltip({ active, payload, label, formatMoney }) {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 shadow-xl">
+    <div className="bg-black-900 border border-black-800 rounded-lg p-4 shadow-xl">
       <p className="font-semibold text-white mb-2">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-4 mb-1">
           <div className="flex items-center gap-2">
-            <div
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: entry.color }}
-            />
-            <span className="text-sm text-gray-300">{entry.name}</span>
+            <div className="w-2 h-2 rounded-full" />
+            <span className="text-sm ">{entry.name}</span>
           </div>
-          <span className="text-sm font-bold text-white">
+          <span className="text-sm font-bold ">
             {entry.name === "revenue" ||
             entry.name === "profit" ||
             entry.name === "sales"
@@ -38,28 +35,23 @@ function CustomTooltip({ active, payload, label, formatMoney }) {
 
 export function RevenueChart({ chartData, formatMoney }) {
   return (
-    <div className="bg-linear-to-brrom-gray-900 to-gray-950 rounded-xl border border-gray-800 p-5 shadow-lg">
+    <div className="bg-linear-to-brrom-black-900 to-black-950 rounded-xl  p-5 pt-10 shadow-lg">
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-lg font-bold text-white">Daromad va maqsadlar</h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Haqiqiy daromad vs maqsadli daromad
-          </p>
-        </div>
+        <div></div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full" />
-            <span className="text-sm text-gray-400">Haqiqiy</span>
+            <span className="text-sm ">Haqiqiy</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-            <span className="text-sm text-gray-400">Maqsad</span>
+            <span className="text-sm ">Maqsad</span>
           </div>
         </div>
       </div>
 
       <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="103%" height="130%">
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -78,14 +70,14 @@ export function RevenueChart({ chartData, formatMoney }) {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="#3b82f6"
+              stroke="blue"
               fillOpacity={1}
               fill="url(#colorRevenue)"
             />
             <Area
               type="monotone"
               dataKey="target"
-              stroke="#10b981"
+              stroke=""
               strokeDasharray="5 5"
               fillOpacity={1}
               fill="url(#colorTarget)"

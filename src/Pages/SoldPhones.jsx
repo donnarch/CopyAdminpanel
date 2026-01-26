@@ -178,7 +178,7 @@ function SalesFiltersBar({
   onClear,
 }) {
   return (
-    <div className="rounded-lg border border-slate-700 bg-slate-800 p-4">
+    <div className="rounded-lg  p-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <input
           type="text"
@@ -223,15 +223,13 @@ function SalesFiltersBar({
 }
 
 function SaleCard({ item, onClick }) {
-  const profit = item.sellPrice - item.buyPrice;
-
   return (
     <div
       onClick={onClick}
       className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden hover:border-blue-500 transition cursor-pointer hover:shadow-lg hover:shadow-blue-500/20"
     >
       {/* Image - Medium Size */}
-      <div className="relative h-60 bg-slate-700 flex items-center justify-center overflow-hidden">
+      <div className="relative h-80 bg-slate-700 flex items-center justify-center overflow-hidden">
         {item.image ? (
           <img
             src={item.image}
@@ -260,29 +258,14 @@ function SaleCard({ item, onClick }) {
 
         {/* Price */}
         <div className="space-y-2 pb-4 border-b border-slate-700">
+          <div className="flex justify-between text-sm"></div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Xarid:</span>
-            <span className="text-slate-300">{money(item.buyPrice)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Sotish:</span>
             <span className="text-white font-semibold">
               {money(item.sellPrice)}
             </span>
           </div>
         </div>
-
-        {/* Profit */}
-        <div className="mt-4 py-3 bg-green-600/20 rounded-lg text-center">
-          <p className="text-xs text-slate-400 mb-1">Foyda</p>
-          <p className="text-lg font-bold text-green-400">+{money(profit)}</p>
-        </div>
-
-        {/* Customer */}
-        <div className="mt-4 pt-4 border-t border-slate-700">
-          <p className="text-sm text-white font-medium">{item.customerName}</p>
-          <p className="text-xs text-slate-400">{item.customerPhone}</p>
-        </div>
+        <div className="mt-4 pt-4 border-t border-slate-700"></div>
 
         {/* Click to view */}
         <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg transition">
@@ -300,7 +283,7 @@ function SaleDetailsModal({ open, data, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center "
       onClick={onClose}
     >
       <div
@@ -464,38 +447,10 @@ export default function SoldPhones() {
   }, [filtered]);
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
+    <div className="min-h-screen  p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white">
-              Sotilgan Telefonlar
-            </h1>
-            <p className="text-slate-400 mt-1">
-              Kimga sotildi, qachon sotildi, narxlar va sof foyda
-            </p>
-          </div>
-
-          <div className="bg-slate-800 rounded-lg border border-slate-700 px-6 py-4 text-sm">
-            <p className="text-slate-400 text-xs mb-2">STATISTIKA</p>
-            <div className="space-y-2">
-              <div className="text-white font-semibold">
-                {summary.count} ta telefon
-              </div>
-              <div className="text-slate-300">
-                Tushum:{" "}
-                <span className="text-blue-400">{money(summary.revenue)}</span>
-              </div>
-              <div className="text-slate-300">
-                Foyda:{" "}
-                <span className="text-green-400">{money(summary.profit)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Filters */}
+        <div className="flex flex-wrap items-start justify-between gap-4"></div>
         <SalesFiltersBar
           query={query}
           onQuery={setQuery}
@@ -512,8 +467,6 @@ export default function SoldPhones() {
             setPayment("all");
           }}
         />
-
-        {/* Cards Grid - Smaller */}
         {currentItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentItems.map((item) => (
@@ -532,14 +485,12 @@ export default function SoldPhones() {
             </p>
           </div>
         )}
-
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-3 mt-8">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-2 rounded-lg border border-slate-700 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition text-white"
+              className="p-2 rounded-lg border border-slate-700 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -571,8 +522,6 @@ export default function SoldPhones() {
             </button>
           </div>
         )}
-
-        {/* Modal */}
         <SaleDetailsModal
           open={!!selected}
           data={selected}
@@ -582,7 +531,6 @@ export default function SoldPhones() {
     </div>
   );
 }
-
 function money(n) {
   return new Intl.NumberFormat("uz-UZ").format(n) + " so'm";
 }

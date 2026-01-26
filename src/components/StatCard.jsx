@@ -8,13 +8,38 @@ export function StatCard({
   trend,
   bgColor,
   iconColor,
+  darkMode = true, // Default value true
+  
 }) {
   return (
-    <div className="bg-linear-to-br from-gray-900 to-gray-950 rounded-xl border border-gray-800 p-5 shadow-lg">
+    <div
+      className={`
+      ${
+        darkMode
+          ? "bg-linear-to-br from-black-900 to-gray-950 border-none"
+          : "bg-white border-none"
+      } 
+      rounded-xl border p-5 shadow-lg transition-colors
+    `}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-400 mb-2">{label}</p>
-          <p className="text-2xl font-bold text-white">{value}</p>
+          <p
+            className={`
+            text-sm mb-2 
+            ${darkMode ? "text-white" : "text-black"}
+          `}
+          >
+            {label}
+          </p>
+          <p
+            className={`
+            text-2xl font-bold 
+            ${darkMode ? "text-white" : "text-black"}
+          `}
+          >
+            {value}
+          </p>
         </div>
         <div
           className={`w-12 h-12 ${bgColor} rounded-lg flex items-center justify-center`}
@@ -24,14 +49,29 @@ export function StatCard({
       </div>
       <div className="flex items-center gap-1 mt-4 text-sm">
         {trend === "up" ? (
-          <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <TrendingUp
+            className={`w-4 h-4 ${
+              darkMode ? "text-emerald-400" : "text-emerald-600"
+            }`}
+          />
         ) : (
-          <TrendingDown className="w-4 h-4 text-red-400" />
+          <TrendingDown
+            className={`w-4 h-4 ${darkMode ? "text-red-400" : "text-red-600"}`}
+          />
         )}
-        <span className={trend === "up" ? "text-emerald-400" : "text-red-400"}>
+        <span
+          className={
+            trend === "up"
+              ? darkMode
+                ? "text-emerald-400"
+                : "text-emerald-600"
+              : darkMode
+              ? "text-red-400"
+              : "text-red-600"
+          }
+        >
           {change}
         </span>
-        <span className="text-gray-500">o'tgan davrga nisbatan</span>
       </div>
     </div>
   );

@@ -9,12 +9,26 @@ import {
   Cell,
 } from "recharts";
 
-function CustomBarTooltip({ active, payload, label, formatMoney }) {
+function CustomBarTooltip({ active, payload, label, formatMoney, darkMode }) {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 shadow-xl">
-      <p className="font-semibold text-white mb-2">{label}</p>
+    <div
+      className={`
+      ${
+        darkMode ? "bg-black-900 border-none" : "bg-white border-none"
+      } 
+      border rounded-lg p-4 shadow-xl backdrop-blur-sm
+    `}
+    >
+      <p
+        className={`
+        font-semibold mb-2
+        ${darkMode ? "text-white" : "text-gray-900"}
+      `}
+      >
+        {label}
+      </p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-4 mb-1">
           <div className="flex items-center gap-2">
@@ -22,11 +36,21 @@ function CustomBarTooltip({ active, payload, label, formatMoney }) {
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-sm text-gray-300 capitalize">
+            <span
+              className={`
+              text-sm capitalize
+              ${darkMode ? "text-gray-300" : "text-gray-700"}
+            `}
+            >
               {entry.name}
             </span>
           </div>
-          <span className="text-sm font-bold text-white">
+          <span
+            className={`
+            text-sm font-bold
+            ${darkMode ? "text-white" : "text-gray-900"}
+          `}
+          >
             {entry.name === "sales"
               ? `${entry.value} ta`
               : formatMoney(entry.value * 1000000)}
@@ -37,66 +61,135 @@ function CustomBarTooltip({ active, payload, label, formatMoney }) {
   );
 }
 
-export function BarChartSection({ barChartData, formatMoney }) {
+export function BarChartSection({
+  barChartData,
+  formatMoney,
+  darkMode = true,
+}) {
+  const colors = {
+    sales: {
+      fill: darkMode ? "#3b82f6" : "#60a5fa", 
+      stroke: darkMode ? "#2563eb" : "#1d4ed8",
+      light: darkMode ? "#3b82f6" : "#93c5fd",
+    },
+    profit: {
+      fill: darkMode ? "#10b981" : "#34d399",
+      stroke: darkMode ? "#059669" : "#059669",
+      light: darkMode ? "#10b981" : "#6ee7b7",
+    },
+    expenses: {
+      fill: darkMode ? "#ef4444" : "#f87171",
+      stroke: darkMode ? "#dc2626" : "#dc2626",
+      light: darkMode ? "#ef4444" : "#fca5a5",
+    },
+    grid: darkMode ? "#374151" : "#d1d5db",
+    axis: darkMode ? "#9ca3af" : "#6b7280",
+  };
   return (
-    <div className="bg-linear-to-br from-gray-900 to-gray-950 rounded-xl border border-gray-800 p-5 shadow-lg mb-8">
+    <div
+      className={`
+      ${
+        darkMode
+          ? "bg-gradient-to-br from-black-900 to-black-950 border-none shadow-lg shadow-gray-900/20"
+          : "bg-white border-none shadow-lg shadow-gray-200/50"
+      } 
+      rounded-xl border p-5 mb-8 transition-colors
+    `}
+    >
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-lg font-bold text-white">
-            Sotuv va xarajatlar tahlili
-          </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Sotuv hajmi, foyda va xarajatlarni solishtirma ko'rinishi
-          </p>
-        </div>
+        <div></div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-sm text-gray-400">Sotuvlar</span>
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: colors.sales.light }}
+            ></div>
+            <span
+              className={`
+              text-sm
+              ${darkMode ? "text-gray-400" : "text-gray-600"}
+            `}
+            >
+              Sotuvlar
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-            <span className="text-sm text-gray-400">Foyda</span>
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: colors.profit.light }}
+            ></div>
+            <span
+              className={`
+              text-sm
+              ${darkMode ? "text-gray-400" : "text-gray-600"}
+            `}
+            >
+              Foyda
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-            <span className="text-sm text-gray-400">Xarajatlar</span>
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: colors.expenses.light }}
+            ></div>
+            <span
+              className={`
+              text-sm
+              ${darkMode ? "text-gray-400" : "text-gray-600"}
+            `}
+            >
+              Xarajatlar
+            </span>
           </div>
         </div>
       </div>
-
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={barChartData}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#374151"
+              stroke={colors.grid}
               vertical={false}
             />
             <XAxis
               dataKey="name"
-              stroke="#9ca3af"
+              stroke={colors.axis}
               axisLine={false}
               tickLine={false}
+              fontSize={12}
             />
-            <YAxis stroke="#9ca3af" axisLine={false} tickLine={false} />
+            <YAxis
+              stroke={colors.axis}
+              axisLine={false}
+              tickLine={false}
+              fontSize={12}
+            />
             <Tooltip
-              content={<CustomBarTooltip formatMoney={formatMoney} />}
-              cursor={{ fill: "rgba(255, 255, 255, 0.05)" }}
+              content={
+                <CustomBarTooltip
+                  formatMoney={formatMoney}
+                  darkMode={darkMode}
+                />
+              }
+              cursor={{
+                fill: darkMode
+                  ? "rgba(255, 255, 255, 0.05)"
+                  : "rgba(0, 0, 0, 0.05)",
+              }}
             />
             <Bar
               dataKey="sales"
               name="Sotuvlar"
               radius={[4, 4, 0, 0]}
-              fill="#3b82f6"
-              stroke="#2563eb"
+              fill={colors.sales.fill}
+              stroke={colors.sales.stroke}
               strokeWidth={1}
             >
               {barChartData.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
-                  fill="#3b82f6"
-                  stroke="#2563eb"
+                  key={`cell-sales-${index}`}
+                  fill={colors.sales.fill}
+                  stroke={colors.sales.stroke}
                   strokeWidth={1}
                 />
               ))}
@@ -105,15 +198,15 @@ export function BarChartSection({ barChartData, formatMoney }) {
               dataKey="profit"
               name="Foyda"
               radius={[4, 4, 0, 0]}
-              fill="#10b981"
-              stroke="#059669"
+              fill={colors.profit.fill}
+              stroke={colors.profit.stroke}
               strokeWidth={1}
             >
               {barChartData.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
-                  fill="#10b981"
-                  stroke="#059669"
+                  key={`cell-profit-${index}`}
+                  fill={colors.profit.fill}
+                  stroke={colors.profit.stroke}
                   strokeWidth={1}
                 />
               ))}
@@ -122,15 +215,15 @@ export function BarChartSection({ barChartData, formatMoney }) {
               dataKey="expenses"
               name="Xarajatlar"
               radius={[4, 4, 0, 0]}
-              fill="#ef4444"
-              stroke="#dc2626"
+              fill={colors.expenses.fill}
+              stroke={colors.expenses.stroke}
               strokeWidth={1}
             >
               {barChartData.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
-                  fill="#ef4444"
-                  stroke="#dc2626"
+                  key={`cell-expenses-${index}`}
+                  fill={colors.expenses.fill}
+                  stroke={colors.expenses.stroke}
                   strokeWidth={1}
                 />
               ))}
