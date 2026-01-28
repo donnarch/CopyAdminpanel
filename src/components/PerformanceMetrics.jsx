@@ -1,35 +1,80 @@
-export function PerformanceMetrics({ data }) {
+import { TrendingUp, TrendingDown } from "lucide-react";
+
+export function PerformanceMetrics({ data, darkMode = true }) {
   return (
-    <div className="bg-linear-to-br  rounded-xl  p-5 ">
-      <h2 className="text-lg font-bold  mb-6">Biznes ko'rsatkichlari</h2>
-      <div className="grid grid-cols-2 gap-4">
+    <div
+      className={`
+      ${
+        darkMode
+          ? "bg-gradient-to-br border-none"
+          : "bg-gradient-to-br from-white to-gray-50 border-none"
+      }
+      rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 shadow-lg transition-colors
+    `}
+    >
+      <h2
+        className={`text-base sm:text-lg md:text-xl font-bold mb-4 sm:mb-6 ${
+          darkMode ? "text-white" : "text-black"
+        }`}
+      >
+        Biznes ko'rsatkichlari
+      </h2>
+
+      {/* Responsive Grid: 1 col on mobile, 2 on sm, 2-4 on md+ */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-5">
         {data.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <div key={idx} className="p-4  rounded-lg  border border-gray-200">
+            <div
+              key={idx}
+              className={`
+                p-3 sm:p-4 rounded-lg border transition-colors duration-200
+                ${
+                  darkMode
+                    ? "bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60"
+                    : "bg-white/50 border-gray-200 hover:bg-gray-50"
+                }
+              `}
+            >
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-bold ">{item.metric}</p>
+                <p
+                  className={`text-xs sm:text-sm font-bold ${
+                    darkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  {item.metric}
+                </p>
                 <div
-                  className={`p-2 rounded-lg ${item.color.replace(
+                  className={`p-1.5 sm:p-2 rounded-lg transition-colors ${item.color.replace(
                     "text",
                     "bg"
                   )}/10`}
                 >
-                  <Icon className={`w-5 h-5 ${item.color}`} />
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${item.color}`} />
                 </div>
               </div>
-              <div className="flex items-baseline gap-2">
-                <p className="text-2xl font-bold">{item.value}</p>
+
+              <div className="flex items-baseline gap-2 mb-3">
+                <p
+                  className={`text-xl sm:text-2xl md:text-3xl font-bold ${
+                    darkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  {item.value}
+                </p>
                 <span
-                  className={`text-sm font-medium ${
+                  className={`text-xs sm:text-sm font-medium ${
                     item.trend === "up" ? "text-emerald-400" : "text-red-400"
                   }`}
                 >
                   {item.change}
                 </span>
               </div>
-              <div className="flex items-center gap-1 mt-3 text-sm">
-                <span className="text-gray-500">trend:</span>
+
+              <div className="flex items-center gap-1 text-xs sm:text-sm">
+                <span className={darkMode ? "text-gray-500" : "text-gray-600"}>
+                  Trend:
+                </span>
                 <span
                   className={
                     item.trend === "up" ? "text-emerald-400" : "text-red-400"

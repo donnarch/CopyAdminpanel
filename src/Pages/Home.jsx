@@ -25,6 +25,7 @@ import {
 import { RANGE_OPTIONS, TOP_MODELS } from "../utils/constants";
 import { usePerformanceData } from "../hooks/usePerformanceData";
 import { useFinancialData } from "../hooks/useFinancialData";
+
 export default function Home() {
   const [range, setRange] = useState("week");
   const [loading, setLoading] = useState(false);
@@ -35,11 +36,13 @@ export default function Home() {
     }
     return false;
   });
+
   const stats = useMemo(() => calculateStats(), []);
   const chartData = useMemo(() => getChartData(range), [range]);
   const barChartData = useMemo(() => getBarChartData(range), [range]);
   const performanceData = usePerformanceData(stats);
   const financialData = useFinancialData();
+
   useEffect(() => {
     const handleThemeChange = () => {
       const isDark = document.documentElement.classList.contains("dark");
@@ -53,10 +56,12 @@ export default function Home() {
       clearInterval(interval);
     };
   }, []);
+
   const handleRefresh = () => {
     setLoading(true);
     setTimeout(() => setLoading(false), 1000);
   };
+
   const handleExport = () => {
     const data = [
       ["Metric", "Value"],
@@ -76,18 +81,21 @@ export default function Home() {
     link.click();
     document.body.removeChild(link);
   };
+
   return (
     <div
-      className={`p-4 md:p-6 min-h-screen transition-colors ${
-        darkMode ? "bg-black-900" : "bg-gray-50"
+      className={`p-3 sm:p-4 md:p-6 min-h-screen transition-colors ${
+        darkMode ? "" : "bg-gray-50"
       }`}
     >
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4 flex-col md:flex-row gap-4">
-          <div className="flex items-center gap-3">
+      {/* Header Section */}
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+          {/* Title & Refresh Button */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <h1
-              className={`text-2xl md:text-3xl font-bold ${
-                darkMode ? "text-gray-100" : "text-gray-900"
+              className={`text-xl sm:text-2xl md:text-3xl font-bold ${
+                darkMode ? "text-white" : "text-gray-900"
               }`}
             >
               Dashboard Analytics
@@ -95,20 +103,23 @@ export default function Home() {
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className={`p-2 rounded-lg transition-colors ${
+              className={`p-1.5 sm:p-2 rounded-lg transition-all cursor-pointer ${
                 darkMode
-                  ? "hover:bg-gray-800 text-gray-300"
-                  : "hover:bg-gray-200 text-gray-600"
-              } ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
+                  ? "hover:bg-gray-800 text-gray-400 hover:text-gray-300"
+                  : "hover:bg-gray-200 text-gray-600 hover:text-gray-700"
+              } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
               title="Ma'lumotlarni yangilash"
             >
               <RefreshCw
-                className={`w-5 h-5 ${loading ? "animate-spin" : ""}`}
+                className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                  loading ? "animate-spin" : ""
+                }`}
               />
             </button>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Controls: Range Selector & Export Button */}
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap">
             <Segmented
               value={range}
               onChange={setRange}
@@ -116,27 +127,29 @@ export default function Home() {
             />
             <button
               onClick={handleExport}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-colors ${
+              className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg transition-all font-semibold text-xs sm:text-sm ${
                 darkMode
-                  ? "bg-black-800 border border-gray-700 text-black-100 hover:bg-black font-bold"
-                  : "bg-white border border-black text-black font-bold"
+                  ? " border border-gray-700 text-gray-100 hover:bg-gray-700"
+                  : "bg-white border border-gray-300 text-gray-900 hover:bg-gray-50"
               }`}
             >
-              <Download className="w-4 h-4" />
-              Export
+              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Export</span>
             </button>
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+      {/* Stats Grid - Responsive 1-2-3-4 columns */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8">
         <StatCard
           icon={ShoppingBag}
           label="Sotilgan mahsulotlar"
           value={`${stats.soldCount} ta`}
           change="+8.4%"
           trend="up"
-          bgColor={darkMode ? "bg-gray-800/40" : "bg-blue-100"}
-          iconColor={darkMode ? "text-gray-100" : "text-blue-600"}
+          bgColor={darkMode ? "bg-blue-500/20" : "bg-blue-100"}
+          iconColor={darkMode ? "text-blue-400" : "text-blue-600"}
           darkMode={darkMode}
         />
         <StatCard
@@ -145,8 +158,8 @@ export default function Home() {
           value={formatMoney(stats.revenue)}
           change="+12.4%"
           trend="up"
-          bgColor={darkMode ? "bg-gray-800/40" : "bg-emerald-100"}
-          iconColor={darkMode ? "text-gray-100" : "text-emerald-600"}
+          bgColor={darkMode ? "bg-emerald-500/20" : "bg-emerald-100"}
+          iconColor={darkMode ? "text-emerald-400" : "text-emerald-600"}
           darkMode={darkMode}
         />
         <StatCard
@@ -155,8 +168,8 @@ export default function Home() {
           value={formatMoney(stats.expenses)}
           change="+1.6%"
           trend="down"
-          bgColor={darkMode ? "bg-gray-800/40" : "bg-red-100"}
-          iconColor={darkMode ? "text-gray-100" : "text-red-600"}
+          bgColor={darkMode ? "bg-red-500/20" : "bg-red-100"}
+          iconColor={darkMode ? "text-red-400" : "text-red-600"}
           darkMode={darkMode}
         />
         <StatCard
@@ -165,12 +178,14 @@ export default function Home() {
           value={`${stats.inStock} ta`}
           change="+2.0%"
           trend="up"
-          bgColor={darkMode ? "bg-gray-800/40" : "bg-purple-100"}
-          iconColor={darkMode ? "text-gray-100" : "text-purple-600"}
+          bgColor={darkMode ? "bg-purple-500/20" : "bg-purple-100"}
+          iconColor={darkMode ? "text-purple-400" : "text-purple-600"}
           darkMode={darkMode}
         />
       </div>
-      <div className="grid lg:grid-cols-2 gap-6 mb-8">
+
+      {/* Charts Section - 1 col mobile, 2 col lg */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6 mb-6 sm:mb-8">
         <RevenueChart
           chartData={chartData}
           formatMoney={formatMoney}
@@ -182,12 +197,18 @@ export default function Home() {
           darkMode={darkMode}
         />
       </div>
-      <BarChartSection
-        barChartData={barChartData}
-        formatMoney={formatMoney}
-        darkMode={darkMode}
-      />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+      {/* Bar Chart - Full Width */}
+      <div className="mb-6 sm:mb-8">
+        <BarChartSection
+          barChartData={barChartData}
+          formatMoney={formatMoney}
+          darkMode={darkMode}
+        />
+      </div>
+
+      {/* Metrics & Financial Summary - 1 col mobile, 2 col lg */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6 mb-6 sm:mb-8">
         <PerformanceMetrics data={performanceData} darkMode={darkMode} />
         <FinancialSummary
           financialData={financialData}
@@ -197,43 +218,52 @@ export default function Home() {
           darkMode={darkMode}
         />
       </div>
+
+      {/* Weekly Report Card - Responsive Layout */}
       <div
-        className={`rounded-xl border p-5 shadow-xl transition-colors ${
-          darkMode ? "bg-black-800 border-gray-700" : "bg-white border-gray-200"
+        className={`rounded-lg sm:rounded-xl border p-3 sm:p-4 md:p-5 shadow-lg transition-colors ${
+          darkMode ? " border-gray-700" : "bg-white border-gray-200"
         }`}
       >
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+          {/* Left: Icon & Info */}
+          <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
             <div
-              className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                darkMode ? "bg-gray-700" : "bg-blue-400"
+              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                darkMode ? "" : "bg-blue-400"
               }`}
             >
-              <Target className="w-6 h-6 text-white" />
+              <Target className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <h3
-                className={`text-lg font-bold mb-1 ${
-                  darkMode ? "text-white-100" : "text-gray-900"
+                className={`text-base sm:text-lg md:text-xl font-bold mb-1 ${
+                  darkMode ? "text-white" : "text-gray-900"
                 }`}
               >
                 Haftalik hisobot
               </h3>
-              <p className={darkMode ? "text-gray-300" : "text-gray-600"}>
+              <p
+                className={`text-xs sm:text-sm ${
+                  darkMode ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
                 Maqsadlarga erishish:{" "}
                 <span className="font-bold text-emerald-400">89.2%</span>
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* Right: Goals & Button */}
+          <div className="flex items-center gap-3 sm:gap-4 justify-between sm:justify-start">
             <div
-              className={`text-right hidden md:block ${
-                darkMode ? "text-gray-300" : "text-gray-600"
+              className={`text-left sm:text-right hidden sm:block text-xs sm:text-sm ${
+                darkMode ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              <p className="text-sm">Quyi maqsadlar</p>
+              <p className="mb-1">Quyi maqsadlar</p>
               <p
-                className={`text-lg font-bold ${
+                className={`font-bold ${
                   darkMode ? "text-gray-100" : "text-gray-900"
                 }`}
               >
@@ -241,16 +271,35 @@ export default function Home() {
               </p>
             </div>
             <button
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all shadow-lg ${
+              className={`inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all shadow-lg flex-shrink-0 ${
                 darkMode
-                  ? "bg-gray-700 hover:bg-gray-600 text-gray-100"
+                  ? "bg-gray-700 hover:bg-gray-600 text-white"
                   : "bg-blue-500 hover:bg-blue-600 text-white"
               }`}
             >
-              <BarChart3 className="w-5 h-5" />
-              Batafsil tahlil
+              <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              <span className="hidden sm:inline">Batafsil tahlil</span>
+              <span className="sm:hidden">Tahlil</span>
             </button>
           </div>
+        </div>
+
+        {/* Mobile Goal Display */}
+        <div
+          className={`sm:hidden mt-3 pt-3 border-t ${
+            darkMode
+              ? "border-gray-700 text-gray-400"
+              : "border-gray-200 text-gray-600"
+          }`}
+        >
+          <p className="text-xs mb-1">Quyi maqsadlar</p>
+          <p
+            className={`text-sm font-bold ${
+              darkMode ? "text-gray-100" : "text-gray-900"
+            }`}
+          >
+            +15% sotuv o'sishi
+          </p>
         </div>
       </div>
     </div>

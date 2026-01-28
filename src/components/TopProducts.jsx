@@ -1,103 +1,113 @@
-import { Smartphone, DollarSign } from "lucide-react";
+import { DollarSign } from "lucide-react";
+
 export function TopProducts({ products, formatMoney, darkMode = true }) {
   return (
     <div
       className={`${
         darkMode
-          ? "bg-gradient-to-br from-black-900 to-black-950 border-none"
-          : "bg-gradient-to-br from-white to-black-50 border-gray-200"
+          ? "bg-gradient-to-br  border-none"
+          : "bg-gradient-to-br from-white to-gray-50 border-gray-200"
       } 
-      rounded-xl border p-5 shadow-lg transition-colors
+      rounded-lg sm:rounded-xl border p-3 sm:p-4 md:p-5 shadow-lg transition-colors
     `}
     >
-      <div className="flex items-center justify-between mb-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div>
           <h2
             className={`
-            text-lg font-bold 
-            ${darkMode ? "text-white" : "text-black-900"}
+            text-base sm:text-lg md:text-xl font-bold 
+            ${darkMode ? "text-white" : "text-gray-900"}
           `}
           >
             Yuqori rentabellik
           </h2>
         </div>
-        <div className="flex items-center gap-2"></div>
       </div>
-      <div className="space-y-4">
+
+      {/* Products List */}
+      <div className="space-y-2 sm:space-y-3 md:space-y-4">
         {products.map((item, idx) => (
           <div
             key={idx}
             className={`
-              flex items-center justify-between p-4 rounded-lg transition-colors border
+              flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 
+              p-3 sm:p-4 rounded-lg transition-all duration-200 border
               ${
                 darkMode
-                  ? "border-gray-800 hover:bg-black-800/50"
-                  : "border-gray-200 hover:bg-black-100/70"
+                  ? "border-gray-700/50 hover:bg-gray-800/50"
+                  : "border-gray-200 hover:bg-gray-100/50"
               }
             `}
           >
-            <div className="flex items-center gap-4">
+            {/* Left Section: Index + Product Info */}
+            <div className="flex items-center gap-3 flex-1 min-w-0">
               <div
                 className={`
-                w-10 h-10 rounded-lg flex items-center justify-center font-bold shadow-lg
+                w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-white 
+                flex-shrink-0 shadow-lg transition-transform hover:scale-105
                 ${
                   darkMode
-                    ? "bg-gradient-to-br  text-white"
-                    : "bg-gradient-to-br from-gray-600 to-gray-600 text-white"
+                    ? "bg-gradient-to-br from-blue-500 to-purple-600"
+                    : "bg-gradient-to-br from-blue-400 to-purple-500"
                 }
               `}
               >
                 {idx + 1}
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p
-                  className={`font-medium ${
+                  className={`font-medium text-sm sm:text-base truncate ${
                     darkMode ? "text-white" : "text-gray-900"
                   }`}
                 >
                   {item.model}
                 </p>
-                <div className="flex items-center gap-3 mt-1">
+                <div className="flex items-center gap-2 mt-1 flex-wrap text-xs">
                   <span
-                    className={`text-xs ${
-                      darkMode ? "text-gray-400" : "text-gray-500"
+                    className={`${
+                      darkMode ? "text-gray-400" : "text-gray-600"
                     }`}
                   >
-                    {item.sold} ta sotilgan
+                    {item.sold} ta
                   </span>
+                  <span className="hidden sm:inline text-gray-500">•</span>
                   <span
-                    className={`text-xs font-medium ${
+                    className={`font-medium ${
                       darkMode ? "text-emerald-400" : "text-emerald-600"
                     }`}
                   >
                     {item.margin}% marja
                   </span>
+                  <span className="hidden sm:inline text-gray-500">•</span>
                   <span
-                    className={`text-xs ${
-                      darkMode ? "text-gray-400" : "text-gray-500"
+                    className={`${
+                      darkMode ? "text-gray-400" : "text-gray-600"
                     }`}
                   >
-                    {item.stock} ta omborda
+                    {item.stock} omborda
                   </span>
                 </div>
               </div>
             </div>
-            <div className="text-right">
+
+            {/* Right Section: Revenue + Profit */}
+            <div className="text-left sm:text-right flex-shrink-0">
               <p
-                className={`font-bold ${
+                className={`text-base sm:text-lg font-bold ${
                   darkMode ? "text-white" : "text-gray-900"
                 }`}
               >
                 {formatMoney(item.revenue)}
               </p>
-              <div className="flex items-center gap-1 mt-1 justify-end">
+              <div className="flex items-center gap-1 mt-1 sm:justify-end text-xs sm:text-sm">
                 <DollarSign
-                  className={`w-3 h-3 ${
+                  className={`w-3 h-3 flex-shrink-0 ${
                     darkMode ? "text-emerald-400" : "text-emerald-600"
                   }`}
                 />
                 <span
-                  className={`text-xs font-medium ${
+                  className={`font-medium ${
                     darkMode ? "text-emerald-400" : "text-emerald-600"
                   }`}
                 >

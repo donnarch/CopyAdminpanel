@@ -11,6 +11,12 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  Smartphone,
+  Calendar,
+  Cpu,
+  Palette,
+  Barcode,
+  TrendingUp,
 } from "lucide-react";
 
 /* ------------------ DEMO DATA ------------------ */
@@ -101,8 +107,6 @@ const demoPhones = [
   },
 ];
 
-const isDarkMode = () => document.documentElement.classList.contains("dark");
-
 /* ------------------ MAIN ------------------ */
 export default function Inventory() {
   const [phones, setPhones] = useState(demoPhones);
@@ -111,8 +115,7 @@ export default function Inventory() {
   const [editingPhone, setEditingPhone] = useState(null);
   const [selectedPhone, setSelectedPhone] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-  const darkMode = isDarkMode();
+  const [itemsPerPage] = useState(8);
 
   const filtered = useMemo(() => {
     return phones.filter(
@@ -126,7 +129,7 @@ export default function Inventory() {
   const paginatedPhones = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filtered.slice(start, start + itemsPerPage);
-  }, [filtered, currentPage]);
+  }, [filtered, currentPage, itemsPerPage]);
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
@@ -167,17 +170,15 @@ export default function Inventory() {
   };
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-300 ${
-        darkMode ? " " : " "
-      } p-6`}
-    >
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Ombor (Telefonlar)</h1>
-            <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">
+              Ombor (Telefonlar)
+            </h1>
+            <p className="text-zinc-600 dark:text-zinc-400 text-sm sm:text-base">
               Barcha telefonlar ro'yxati
             </p>
           </div>
@@ -186,251 +187,313 @@ export default function Inventory() {
               setEditingPhone(null);
               setOpenForm(true);
             }}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg transition"
+            className="flex items-center justify-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg transition-all w-full sm:w-auto text-sm sm:text-base"
           >
-            <Plus size={20} />
-            Yangi telefon
+            <Plus size={18} className="sm:w-5 sm:h-5" />
+            <span>Yangi telefon</span>
           </button>
         </div>
 
         {/* STATS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Stat
             label="Jami"
             value={stats.total}
-            icon={<Package size={24} />}
-            darkMode={darkMode}
+            icon={<Package size={20} className="sm:w-6 sm:h-6" />}
           />
           <Stat
             label="Omborda"
             value={stats.inStock}
-            icon={<ShoppingCart size={24} />}
-            darkMode={darkMode}
+            icon={<ShoppingCart size={20} className="sm:w-6 sm:h-6" />}
           />
           <Stat
             label="Sotilgan"
             value={stats.sold}
-            icon={<DollarSign size={24} />}
-            darkMode={darkMode}
+            icon={<DollarSign size={20} className="sm:w-6 sm:h-6" />}
           />
           <Stat
             label="Foyda"
             value={`${stats.profit.toLocaleString()} so'm`}
-            icon={<DollarSign size={24} />}
-            darkMode={darkMode}
+            icon={<TrendingUp size={20} className="sm:w-6 sm:h-6" />}
           />
         </div>
 
         {/* SEARCH */}
-        <div
-          className={`mb-6 relative ${
-            darkMode ? "text-gray-400" : "text-gray-600"
-          }`}
-        >
-          <Search className="absolute left-3 top-3" size={18} />
+        <div className="mb-4 sm:mb-6 relative">
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+            size={18}
+          />
           <input
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
               setCurrentPage(1);
             }}
-            placeholder="Qidirish..."
-            className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-colors ${
-              darkMode
-                ? "bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-                : "bg-white border-gray-200 placeholder-gray-400"
-            }`}
+            placeholder="Model, brend yoki IMEI bo'yicha qidirish..."
+            className="w-full pl-10 pr-4 py-2 sm:py-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           />
         </div>
 
-        {/* TABLE */}
-        <div
-          className={`rounded-lg overflow-hidden border transition-colors ${
-            darkMode
-              ? "border-gray-800 bg-gray-900"
-              : "border-gray-200 bg-white"
-          }`}
-        >
-          <table className="w-full">
-            <thead className={darkMode ? "bg-gray-800" : "bg-gray-100"}>
-              <tr>
-                {["Telefon", "IMEI", "Holat", "Narx", "Sana", "Amallar"].map(
-                  (h) => (
-                    <th
-                      key={h}
-                      className="px-6 py-3 text-left text-sm font-semibold"
-                    >
-                      {h}
-                    </th>
-                  )
-                )}
-              </tr>
-            </thead>
-            <tbody
-              className={`divide-y ${
-                darkMode ? "divide-gray-800" : "divide-gray-200"
-              }`}
-            >
-              {paginatedPhones.length > 0 ? (
-                paginatedPhones.map((p) => (
-                  <tr
-                    key={p.id}
-                    className={`transition-colors ${
-                      darkMode ? "hover:bg-gray-800" : "hover:bg-gray-50"
-                    }`}
-                  >
-                    <td className="px-6 py-4 flex items-center gap-3">
-                      <img
-                        src={p.image}
-                        className="w-12 h-12 rounded object-cover"
-                        alt={p.model}
-                      />
-                      <div>
-                        <p className="font-semibold">{p.model}</p>
-                        <p
-                          className={`text-sm ${
-                            darkMode ? "text-gray-400" : "text-gray-500"
-                          }`}
-                        >
-                          {p.brand}
-                        </p>
-                      </div>
-                    </td>
-                    <td
-                      className={`px-6 py-4 font-mono text-sm ${
-                        darkMode ? "text-gray-300" : "text-gray-600"
-                      }`}
-                    >
-                      {p.imei}
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge status={p.status} darkMode={darkMode} />
-                    </td>
-                    <td
-                      className={`px-6 py-4 font-semibold ${
-                        darkMode ? "text-green-400" : "text-green-600"
-                      }`}
-                    >
-                      {p.sellPrice.toLocaleString()} so'm
-                    </td>
-                    <td
-                      className={`px-6 py-4 text-sm ${
-                        darkMode ? "text-gray-400" : "text-gray-600"
-                      }`}
-                    >
-                      {p.createdAt}
-                    </td>
-                    <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => setSelectedPhone(p)}
-                        className={`p-2 rounded transition ${
-                          darkMode
-                            ? "hover:bg-blue-900/30 text-blue-400"
-                            : "hover:bg-blue-100 text-blue-600"
-                        }`}
-                        title="Ko'rish"
+        {/* TABLE - Mobile card view / Desktop table view */}
+        <div className="rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
+          {/* Desktop table */}
+          <div className="hidden lg:block">
+            <table className="w-full">
+              <thead className="bg-zinc-100 dark:bg-zinc-800">
+                <tr>
+                  {["Telefon", "IMEI", "Holat", "Narx", "Sana", "Amallar"].map(
+                    (h) => (
+                      <th
+                        key={h}
+                        className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider"
                       >
-                        <Eye size={18} />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditingPhone(p);
-                          setOpenForm(true);
-                        }}
-                        className={`p-2 rounded transition ${
-                          darkMode
-                            ? "hover:bg-green-900/30 text-green-400"
-                            : "hover:bg-green-100 text-green-600"
-                        }`}
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(p.id)}
-                        className={`p-2 rounded transition ${
-                          darkMode
-                            ? "hover:bg-red-900/30 text-red-400"
-                            : "hover:bg-red-100 text-red-600"
-                        }`}
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                        {h}
+                      </th>
+                    )
+                  )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                {paginatedPhones.length > 0 ? (
+                  paginatedPhones.map((p) => (
+                    <tr
+                      key={p.id}
+                      className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+                    >
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={p.image}
+                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
+                            alt={p.model}
+                          />
+                          <div>
+                            <p className="font-semibold text-sm sm:text-base">
+                              {p.model}
+                            </p>
+                            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                              {p.brand}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
+                          {p.imei}
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <StatusBadge status={p.status} />
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="font-semibold text-green-600 dark:text-green-400 text-sm sm:text-base">
+                          {p.sellPrice > 0
+                            ? `${p.sellPrice.toLocaleString()} so'm`
+                            : "-"}
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                          {p.createdAt}
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex gap-1 sm:gap-2">
+                          <button
+                            onClick={() => setSelectedPhone(p)}
+                            className="p-1.5 sm:p-2 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition-colors"
+                            title="Ko'rish"
+                          >
+                            <Eye size={16} className="sm:w-5 sm:h-5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingPhone(p);
+                              setOpenForm(true);
+                            }}
+                            className="p-1.5 sm:p-2 rounded-md hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400 transition-colors"
+                            title="Tahrirlash"
+                          >
+                            <Edit2 size={16} className="sm:w-5 sm:h-5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p.id)}
+                            className="p-1.5 sm:p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
+                            title="O'chirish"
+                          >
+                            <Trash2 size={16} className="sm:w-5 sm:h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center py-12">
+                      <Smartphone className="mx-auto mb-4 text-zinc-400 dark:text-zinc-600 w-12 h-12" />
+                      <p className="text-zinc-600 dark:text-zinc-400">
+                        Hech qanday telefon topilmadi
+                      </p>
                     </td>
                   </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile card view */}
+          <div className="lg:hidden">
+            <div className="space-y-3 p-3 sm:p-4">
+              {paginatedPhones.length > 0 ? (
+                paginatedPhones.map((p) => (
+                  <div
+                    key={p.id}
+                    className="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-4"
+                  >
+                    <div className="flex gap-3">
+                      <img
+                        src={p.image}
+                        className="w-16 h-16 rounded-lg object-cover"
+                        alt={p.model}
+                      />
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold text-sm sm:text-base">
+                              {p.model}
+                            </h3>
+                            <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                              {p.brand}
+                            </p>
+                          </div>
+                          <StatusBadge status={p.status} />
+                        </div>
+
+                        <div className="mt-2 space-y-1">
+                          <div className="flex items-center gap-2 text-xs">
+                            <Barcode size={12} className="text-zinc-500" />
+                            <span className="font-mono">{p.imei}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs">
+                            <Palette size={12} className="text-zinc-500" />
+                            <span>{p.color}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs">
+                            <Cpu size={12} className="text-zinc-500" />
+                            <span>{p.storage}GB</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs">
+                            <Calendar size={12} className="text-zinc-500" />
+                            <span>{p.createdAt}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
+                          <div>
+                            <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                              Narx
+                            </p>
+                            <p className="font-semibold text-green-600 dark:text-green-400">
+                              {p.sellPrice > 0
+                                ? `${p.sellPrice.toLocaleString()} so'm`
+                                : "-"}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setSelectedPhone(p)}
+                              className="p-1.5 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingPhone(p);
+                                setOpenForm(true);
+                              }}
+                              className="p-1.5 rounded-md hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(p.id)}
+                              className="p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ))
               ) : (
-                <tr>
-                  <td colSpan="6" className="text-center py-12">
-                    <Package
-                      size={48}
-                      className={`mx-auto mb-4 ${
-                        darkMode ? "text-gray-600" : "text-gray-300"
-                      }`}
-                    />
-                    <p className={darkMode ? "text-gray-400" : "text-gray-500"}>
-                      Hech qanday telefon topilmadi
-                    </p>
-                  </td>
-                </tr>
+                <div className="text-center py-12">
+                  <Smartphone className="mx-auto mb-4 text-zinc-400 dark:text-zinc-600 w-12 h-12" />
+                  <p className="text-zinc-600 dark:text-zinc-400">
+                    Hech qanday telefon topilmadi
+                  </p>
+                </div>
               )}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
 
         {/* PAGINATION */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-6">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className={`p-2 rounded transition disabled:opacity-50 ${
-                darkMode
-                  ? "bg-gray-800 hover:bg-gray-700 text-white disabled:cursor-not-allowed"
-                  : "bg-gray-200 hover:bg-gray-300 disabled:cursor-not-allowed"
-              }`}
-            >
-              <ChevronLeft size={20} />
-            </button>
-
-            <div className="flex gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-4 py-2 rounded font-semibold transition ${
-                      currentPage === page
-                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-                        : darkMode
-                        ? "bg-gray-800 hover:bg-gray-700 text-white"
-                        : "bg-gray-200 hover:bg-gray-300"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-6 sm:mt-8">
+            <div className="text-sm text-zinc-600 dark:text-zinc-400">
+              Jami {filtered.length} ta telefon, {paginatedPhones.length} ta
+              ko'rsatilmoqda
             </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft size={18} />
+              </button>
 
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className={`p-2 rounded transition disabled:opacity-50 ${
-                darkMode
-                  ? "bg-gray-800 hover:bg-gray-700 text-white disabled:cursor-not-allowed"
-                  : "bg-gray-200 hover:bg-gray-300 disabled:cursor-not-allowed"
-              }`}
-            >
-              <ChevronRight size={20} />
-            </button>
+              <div className="flex gap-1">
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  let page;
+                  if (totalPages <= 5) {
+                    page = i + 1;
+                  } else if (currentPage <= 3) {
+                    page = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    page = totalPages - 4 + i;
+                  } else {
+                    page = currentPage - 2 + i;
+                  }
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors ${
+                        currentPage === page
+                          ? "bg-blue-600 text-white"
+                          : "bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+              </div>
 
-            <span
-              className={`ml-4 text-sm ${
-                darkMode ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              {currentPage} / {totalPages}
-            </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -440,7 +503,6 @@ export default function Inventory() {
         <DetailModal
           phone={selectedPhone}
           onClose={() => setSelectedPhone(null)}
-          darkMode={darkMode}
         />
       )}
 
@@ -453,7 +515,6 @@ export default function Inventory() {
             setEditingPhone(null);
           }}
           onSubmit={handleSubmit}
-          darkMode={darkMode}
         />
       )}
     </div>
@@ -462,35 +523,31 @@ export default function Inventory() {
 
 /* ------------------ COMPONENTS ------------------ */
 
-function Stat({ label, value, icon, darkMode }) {
+function Stat({ label, value, icon }) {
   return (
-    <div
-      className={`p-4 rounded-lg border transition-colors flex items-start justify-between ${
-        darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-      }`}
-    >
-      <div>
-        <p
-          className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}
-        >
-          {label}
-        </p>
-        <p className="text-2xl font-bold mt-1">{value}</p>
+    <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-300 dark:border-zinc-700 p-4 sm:p-5 transition-colors">
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+            {label}
+          </p>
+          <p className="text-lg sm:text-xl md:text-2xl font-bold mt-1">
+            {value}
+          </p>
+        </div>
+        <div className="text-blue-600 dark:text-blue-400">{icon}</div>
       </div>
-      <div className={darkMode ? "text-blue-400" : "text-blue-600"}>{icon}</div>
     </div>
   );
 }
 
-function StatusBadge({ status, darkMode }) {
+function StatusBadge({ status }) {
   const colors = {
-    in_stock: darkMode
-      ? "bg-green-900/30 text-green-400"
-      : "bg-green-100 text-green-800",
-    reserved: darkMode
-      ? "bg-yellow-900/30 text-yellow-400"
-      : "bg-yellow-100 text-yellow-800",
-    sold: darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-800",
+    in_stock:
+      "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400",
+    reserved:
+      "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400",
+    sold: "bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300",
   };
 
   const labels = {
@@ -501,126 +558,108 @@ function StatusBadge({ status, darkMode }) {
 
   return (
     <span
-      className={`px-3 py-1 rounded-full text-sm font-semibold ${colors[status]}`}
+      className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${colors[status]}`}
     >
       {labels[status]}
     </span>
   );
 }
 
-function DetailModal({ phone, onClose, darkMode }) {
+function DetailModal({ phone, onClose }) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div
-        className={`rounded-lg max-w-2xl w-full max-h-96 overflow-y-auto transition-colors ${
-          darkMode
-            ? "bg-gray-900 border border-gray-800"
-            : "bg-white border border-gray-200"
-        }`}
-      >
-        <div className="sticky top-0 flex justify-between items-center p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <h2 className="text-2xl font-bold">{phone.model}</h2>
-          <button onClick={onClose} className="hover:opacity-80">
-            <X size={24} />
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+      <div className="bg-white dark:bg-zinc-900 rounded-xl w-full max-w-md sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto border border-zinc-300 dark:border-zinc-800">
+        <div className="sticky top-0 flex justify-between items-center p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate">
+            {phone.model}
+          </h2>
+          <button onClick={onClose} className="hover:opacity-80 p-1">
+            <X size={20} className="sm:w-6 sm:h-6" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div className="flex gap-6">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <img
               src={phone.image}
               alt={phone.model}
-              className="w-40 h-40 rounded-lg object-cover"
+              className="w-full sm:w-40 h-48 sm:h-40 rounded-lg object-cover"
             />
-            <div className="flex-1 space-y-3">
-              <DetailRow
-                label="Brend"
-                value={phone.brand}
-                darkMode={darkMode}
-              />
-              <DetailRow
-                label="Model"
-                value={phone.model}
-                darkMode={darkMode}
-              />
-              <DetailRow label="IMEI" value={phone.imei} darkMode={darkMode} />
-              <DetailRow label="Rang" value={phone.color} darkMode={darkMode} />
-              <DetailRow
-                label="Xotira"
-                value={`${phone.storage}GB`}
-                darkMode={darkMode}
-              />
+            <div className="flex-1 space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <DetailRow
+                  label="Brend"
+                  value={phone.brand}
+                  icon={<Smartphone size={16} />}
+                />
+                <DetailRow
+                  label="Model"
+                  value={phone.model}
+                  icon={<Smartphone size={16} />}
+                />
+                <DetailRow
+                  label="IMEI"
+                  value={phone.imei}
+                  icon={<Barcode size={16} />}
+                />
+                <DetailRow
+                  label="Rang"
+                  value={phone.color}
+                  icon={<Palette size={16} />}
+                />
+                <DetailRow
+                  label="Xotira"
+                  value={`${phone.storage}GB`}
+                  icon={<Cpu size={16} />}
+                />
+                <DetailRow
+                  label="Holat"
+                  value={<StatusBadge status={phone.status} />}
+                  icon={<ShoppingCart size={16} />}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-            <h3 className="font-semibold mb-3 text-lg">Narx ma'lumotlari</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div
-                className={`p-4 rounded-lg ${
-                  darkMode ? "bg-gray-800" : "bg-gray-100"
-                }`}
-              >
-                <p
-                  className={`text-sm ${
-                    darkMode ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
+          <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 sm:pt-6">
+            <h3 className="font-semibold mb-3 sm:mb-4 text-base sm:text-lg">
+              Narx ma'lumotlari
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
                   Sotib olish narxi
                 </p>
-                <p className="text-xl font-bold">
+                <p className="text-lg sm:text-xl font-bold mt-1">
                   {phone.buyPrice.toLocaleString()} so'm
                 </p>
               </div>
-              <div
-                className={`p-4 rounded-lg ${
-                  darkMode ? "bg-gray-800" : "bg-gray-100"
-                }`}
-              >
-                <p
-                  className={`text-sm ${
-                    darkMode ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
+              <div className="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
                   Sotish narxi
                 </p>
-                <p className="text-xl font-bold text-green-500">
-                  {phone.sellPrice.toLocaleString()} so'm
+                <p className="text-lg sm:text-xl font-bold mt-1 text-green-600 dark:text-green-400">
+                  {phone.sellPrice > 0
+                    ? `${phone.sellPrice.toLocaleString()} so'm`
+                    : "-"}
                 </p>
               </div>
-              <div
-                className={`p-4 rounded-lg col-span-2 ${
-                  darkMode ? "bg-blue-900/30" : "bg-blue-100"
-                }`}
-              >
-                <p
-                  className={`text-sm ${
-                    darkMode ? "text-blue-400" : "text-blue-600"
-                  }`}
-                >
+              <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg col-span-1 sm:col-span-2">
+                <p className="text-sm text-blue-600 dark:text-blue-400">
                   Foyda
                 </p>
-                <p
-                  className={`text-2xl font-bold ${
-                    darkMode ? "text-blue-400" : "text-blue-600"
-                  }`}
-                >
+                <p className="text-xl sm:text-2xl font-bold mt-1 text-blue-600 dark:text-blue-400">
                   {(phone.sellPrice - phone.buyPrice).toLocaleString()} so'm
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-            <DetailRow
-              label="Holat"
-              value={<StatusBadge status={phone.status} darkMode={darkMode} />}
-              darkMode={darkMode}
-            />
+          <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 sm:pt-6">
             <DetailRow
               label="Qo'shilgan sana"
               value={phone.createdAt}
-              darkMode={darkMode}
+              icon={<Calendar size={16} />}
             />
           </div>
         </div>
@@ -629,26 +668,21 @@ function DetailModal({ phone, onClose, darkMode }) {
   );
 }
 
-function DetailRow({ label, value, darkMode }) {
+function DetailRow({ label, value, icon }) {
   return (
-    <div className="flex justify-between items-center py-2">
-      <span
-        className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}
-      >
-        {label}
-      </span>
-      <span
-        className={`font-semibold ${
-          darkMode ? "text-gray-200" : "text-gray-800"
-        }`}
-      >
-        {value}
-      </span>
+    <div className="flex items-center gap-3 py-2">
+      <div className="text-zinc-500">{icon}</div>
+      <div className="flex-1">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">{label}</p>
+        <p className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
+          {value}
+        </p>
+      </div>
     </div>
   );
 }
 
-function PhoneForm({ initial, onSubmit, onClose, darkMode }) {
+function PhoneForm({ initial, onSubmit, onClose }) {
   const [data, setData] = useState(
     initial || {
       model: "",
@@ -675,18 +709,14 @@ function PhoneForm({ initial, onSubmit, onClose, darkMode }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div
-        className={`rounded-lg w-full max-w-md max-h-96 overflow-y-auto transition-colors ${
-          darkMode ? "bg-gray-900 border border-gray-800" : "bg-white"
-        }`}
-      >
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+      <div className="bg-white dark:bg-zinc-900 rounded-xl w-full max-w-md sm:max-w-lg max-h-[90vh] overflow-y-auto border border-zinc-300 dark:border-zinc-800">
+        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 sm:p-6 flex justify-between items-center">
+          <h2 className="text-lg sm:text-xl font-bold">
             {initial ? "Tahrirlash" : "Yangi telefon"}
           </h2>
-          <button onClick={onClose} className="hover:opacity-80">
-            <X size={24} />
+          <button onClick={onClose} className="hover:opacity-80 p-1">
+            <X size={20} className="sm:w-6 sm:h-6" />
           </button>
         </div>
 
@@ -695,7 +725,7 @@ function PhoneForm({ initial, onSubmit, onClose, darkMode }) {
             e.preventDefault();
             onSubmit(data);
           }}
-          className="p-6 space-y-4"
+          className="p-4 sm:p-6 space-y-3 sm:space-y-4"
         >
           {[
             { name: "model", placeholder: "Model" },
@@ -710,37 +740,30 @@ function PhoneForm({ initial, onSubmit, onClose, darkMode }) {
             },
             { name: "sellPrice", placeholder: "Sotish narxi", type: "number" },
           ].map((f) => (
-            <input
-              key={f.name}
-              type={f.type || "text"}
-              name={f.name}
-              placeholder={f.placeholder}
-              value={data[f.name]}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 rounded border transition-colors ${
-                darkMode
-                  ? "bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-                  : "bg-white border-gray-300 placeholder-gray-400"
-              }`}
-              required={["model", "brand", "imei"].includes(f.name)}
-            />
+            <div key={f.name}>
+              <input
+                type={f.type || "text"}
+                name={f.name}
+                placeholder={f.placeholder}
+                value={data[f.name]}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                required={["model", "brand", "imei"].includes(f.name)}
+              />
+            </div>
           ))}
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className={`flex-1 py-2 rounded font-semibold transition ${
-                darkMode
-                  ? "bg-gray-800 hover:bg-gray-700 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
+              className="flex-1 py-2.5 sm:py-3 rounded-lg font-semibold bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors text-sm sm:text-base"
             >
-              Bekor
+              Bekor qilish
             </button>
             <button
               type="submit"
-              className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded font-semibold transition"
+              className="flex-1 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all text-sm sm:text-base"
             >
               Saqlash
             </button>

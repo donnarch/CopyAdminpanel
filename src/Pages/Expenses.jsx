@@ -148,92 +148,19 @@ export default function Expenses() {
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-1">
-          <div className="bg-linear-to-b  border border-gray-300 rounded-2xl p-6 sticky top-6">
-            <h2 className=" font-bold text-xl mb-6">Yangi Xarajat</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="text-slate-800 text-sm mb-2 block">
-                  Nomi
-                </label>
-                <input
-                  type="text"
-                  placeholder="Masalan: Oziq-ovqat"
-                  value={newExpense.title}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, title: e.target.value })
-                  }
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
-                />
-              </div>
-              <div>
-                <label className="text-slate-800 text-sm mb-2 block">
-                  Summa ($)
-                </label>
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  value={newExpense.amount}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, amount: e.target.value })
-                  }
-                  className="w-full  border border-gray-300 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
-                />
-              </div>
-              <div>
-                <label className="text-slate-800 text-sm mb-2 block">
-                  Sana
-                </label>
-                <input
-                  type="date"
-                  value={newExpense.date}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, date: e.target.value })
-                  }
-                  className="w-full  border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-200 "
-                />
-              </div>
-              <div>
-                <label className="text-slate-400 text-sm mb-2 block">
-                  Kategoriya
-                </label>
-                <select
-                
-                  value={newExpense.category}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, category: e.target.value })
-                  }
-                  className="w-full  border border-gray-300 rounded-xl px-4 py-3  focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat} className="">
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <button
-                onClick={handleAddExpense}
-                className="w-full bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl px-4 py-3 flex items-center justify-center gap-2 font-semibold mt-6 transition-all transform hover:-translate-y-0.5"
-              >
-                <Plus className="w-5 h-5" /> Xarajat Qo'shish
-              </button>
-            </div>
-          </div>
-        </div>
         <div className="lg:col-span-3">
-          <div className="bg-linear-to-b  border border-gray-300 rounded-2xl overflow-hidden">
+          <div className=" ml-50 border border-gray-300 rounded-2xl overflow-hidden">
             {/* Table Header */}
-            <div className="p-6 border-b border-gray-500">
+            <div className="p-8 border-b border-gray-500">
               <div className="flex justify-between items-center">
                 <h2 className=" font-bold text-xl">Xarajatlar Ro'yxati</h2>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 border border-gray-700 rounded-xl px-4 py-2">
-                    <Filter className="w-4 h-4 text-slate-400" />
+                    <Filter className="w-4 h-4 " />
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="bg-transparent  focus:outline-none"
+                      className="bg-transparent text-black focus:outline-none"
                     >
                       <option value="Hammasi">Hammasi</option>
                       {categories.map((cat) => (

@@ -115,31 +115,30 @@ export default function Auth() {
 
   /* ---------- UI ---------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-black to-slate-800 flex items-center justify-center p-3 sm:p-4 md:p-6">
+      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
         {/* HEADER */}
-        <div className="text-center mb-8">
-          <div className="inline-block bg-blue-600 p-3 rounded-lg mb-4">
-            <Smartphone className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-white">Telefon Admin</h1>
-          <p className="text-slate-400 mt-2">Telefon sotish admin paneli</p>
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+            Telefon Admin
+          </h1>
         </div>
 
         {/* CARD */}
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-8">
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 sm:p-6 md:p-8">
           {/* TABS */}
-          <div className="flex gap-4 mb-8">
+          <div className="flex gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8">
             {["login", "register"].map((t) => (
               <button
                 key={t}
+                type="button"
                 onClick={() => {
                   setAuthState(t);
                   resetForm();
                 }}
-                className={`flex-1 py-2 rounded-lg font-semibold transition ${
+                className={`flex-1 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all ${
                   authState === t
-                    ? "bg-blue-600 text-white"
+                    ? "bg-blue-600 text-white shadow-lg"
                     : "bg-slate-700 text-slate-300 hover:bg-slate-600"
                 }`}
               >
@@ -150,19 +149,19 @@ export default function Auth() {
 
           {/* ALERTS */}
           {error && (
-            <div className="mb-4 p-3 rounded-lg text-sm bg-red-500/20 text-red-300 border border-red-500">
+            <div className="mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg text-xs sm:text-sm bg-red-500/20 text-red-300 border border-red-500">
               {error}
             </div>
           )}
           {success && (
-            <div className="mb-4 p-3 rounded-lg text-sm bg-green-500/20 text-green-300 border border-green-500">
+            <div className="mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg text-xs sm:text-sm bg-green-500/20 text-green-300 border border-green-500">
               {success}
             </div>
           )}
 
-          {/* LOGIN */}
+          {/* LOGIN FORM */}
           {authState === "login" && (
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
               <Input
                 icon={Mail}
                 name="email"
@@ -180,21 +179,29 @@ export default function Auth() {
               />
 
               <button
+                type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-semibold text-white"
+                className="w-full bg-blue-600 hover:bg-blue-700 py-2 sm:py-3 rounded-lg font-semibold text-white text-sm sm:text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Kuting..." : "Kirish"}
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                    Kuting...
+                  </span>
+                ) : (
+                  "Kirish"
+                )}
               </button>
 
-              <p className="text-xs text-slate-400 text-center">
-                admin@admin.com / admin123
+              <p className="text-xs text-slate-400 text-center mt-3 sm:mt-4">
+                Test uchun: admin@admin.com / admin123
               </p>
             </form>
           )}
 
-          {/* REGISTER */}
+          {/* REGISTER FORM */}
           {authState === "register" && (
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
               <Input
                 icon={User}
                 name="name"
@@ -225,17 +232,26 @@ export default function Auth() {
               />
 
               <button
+                type="submit"
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg font-semibold text-white"
+                className="w-full bg-green-600 hover:bg-green-700 py-2 sm:py-3 rounded-lg font-semibold text-white text-sm sm:text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Kuting..." : "Ro'yxatdan o'tish"}
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                    Kuting...
+                  </span>
+                ) : (
+                  "Ro'yxatdan o'tish"
+                )}
               </button>
             </form>
           )}
         </div>
 
-        <p className="text-center text-slate-500 text-sm mt-6">
-          © 2024 Telefon Admin Panel
+        {/* FOOTER */}
+        <p className="text-center text-slate-500 text-xs sm:text-sm mt-4 sm:mt-6">
+          © {new Date().getFullYear()} Telefon Admin Panel
         </p>
       </div>
     </div>
@@ -246,10 +262,10 @@ export default function Auth() {
 function Input({ icon: Icon, ...props }) {
   return (
     <div className="relative">
-      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 sm:w-5 sm:h-5" />
       <input
         {...props}
-        className="w-full  pl-10 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-blue-500 outline-none"
+        className="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-3 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm sm:text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-500"
         required
       />
     </div>
@@ -266,23 +282,28 @@ function PasswordInput({
 }) {
   return (
     <div className="relative">
-      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 sm:w-5 sm:h-5" />
       <input
         type={show ? "text" : "password"}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full pl-10 pr-10 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-blue-500 outline-none"
+        className="w-full pl-9 sm:pl-10 pr-10 py-2 sm:py-3 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm sm:text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-500"
         required
       />
       {toggle && (
         <button
           type="button"
           onClick={toggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+          aria-label={show ? "Parolni yashirish" : "Parolni ko'rsatish"}
         >
-          {show ? <EyeOff /> : <Eye />}
+          {show ? (
+            <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
+          ) : (
+            <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+          )}
         </button>
       )}
     </div>

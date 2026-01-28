@@ -94,8 +94,6 @@ export default function TopSelling() {
     { name: "Google", value: 128, color: "#8B5CF6" },
   ];
 
-  const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
-
   const totalSales = topPhones.reduce((sum, phone) => sum + phone.sold, 0);
   const totalRevenue = topPhones.reduce((sum, phone) => sum + phone.revenue, 0);
   const avgRating = (
@@ -103,17 +101,17 @@ export default function TopSelling() {
   ).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-linear-to-br p-4 md:p-8">
+    <div className="min-h-screen p-3 sm:p-4 md:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="mb-8 animate-fadeIn">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
+      <div className="mb-6 sm:mb-8 animate-fadeIn">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="w-full">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-linear-to-r from-blue-500 to-purple-600 rounded-xl">
-                <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-white" />
+              <div className="p-2 sm:p-2.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
               </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold bg-linear-to-r ">
+              <div className="flex-1">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
                   Eng Ko'p Sotilayotgan Telefonlar
                 </h1>
               </div>
@@ -121,8 +119,9 @@ export default function TopSelling() {
           </div>
         </div>
       </div>
+
       {/* Stats Cards with Hover Effects */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {[
           {
             title: "Jami Sotuvlar",
@@ -130,7 +129,6 @@ export default function TopSelling() {
             icon: ShoppingCart,
             color: "from-blue-500 to-cyan-500",
             change: "+12.5%",
-            bgIcon: "🛒",
           },
           {
             title: "Jami Daromad",
@@ -138,7 +136,6 @@ export default function TopSelling() {
             icon: DollarSign,
             color: "from-emerald-500 to-green-500",
             change: "+8.3%",
-            bgIcon: "💰",
           },
           {
             title: "Aktiv Brendlar",
@@ -146,7 +143,6 @@ export default function TopSelling() {
             icon: Users,
             color: "from-purple-500 to-violet-500",
             change: "+2 yangi",
-            bgIcon: "🏢",
           },
           {
             title: "O'rtacha Reyting",
@@ -154,42 +150,37 @@ export default function TopSelling() {
             icon: Star,
             color: "from-amber-500 to-orange-500",
             change: "Yuqori",
-            bgIcon: "⭐",
           },
         ].map((stat, index) => (
           <div
             key={index}
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br  p-6  transition-all duration-300 hover:scale-[1.02]"
+            className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br p-4 sm:p-5 md:p-6 transition-all duration-300 hover:scale-[1.02]"
           >
-            <div
-              className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-              style={{
-                background: stat.color
-                  .replace("from-", "")
-                  .replace("to-", "")
-                  .split(" "),
-              }}
-            />
             <div className="relative z-10">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className=" text-sm mb-1">{stat.title}</p>
-                  <p className="text-2xl md:text-3xl font-bold ">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs sm:text-sm md:text-base mb-1">
+                    {stat.title}
+                  </p>
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold">
                     {stat.value}
                   </p>
                   <div className="flex items-center gap-1 mt-2">
                     <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
                       {stat.change}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 hidden sm:inline">
                       o'tgan oyga nisbatan
+                    </span>
+                    <span className="text-xs text-slate-500 sm:hidden">
+                      o'tgan oy
                     </span>
                   </div>
                 </div>
                 <div
-                  className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg`}
+                  className={`p-2 sm:p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg ml-2`}
                 >
-                  <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                  <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
                 </div>
               </div>
             </div>
@@ -198,15 +189,20 @@ export default function TopSelling() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Monthly Sales Chart */}
-        <div className="group relative bg-gradient-to-br  backdrop-blur-sm rounded-2xlp-6  transition-all duration-300">
-          <div className="absolute -top-3 left-6 px-4 py-1 bg-gradient-to-r from-blue-500 to-cyan-900 rounded-full text-sm font-semibold text-white flex items-center gap-2">
-            <BarChart3 className="w-4 h-4" />
-            Oylik Sotuvlar Trendi
+        <div className="group relative bg-gradient-to-br backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 transition-all duration-300">
+          <div className="absolute -top-2 sm:-top-3 left-4 sm:left-6 px-3 sm:px-4 py-1 bg-gradient-to-r from-blue-500 to-cyan-900 rounded-full text-xs sm:text-sm font-semibold text-white flex items-center gap-2">
+            <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline">Oylik Sotuvlar Trendi</span>
+            <span className="xs:hidden">Sotuvlar Trendi</span>
           </div>
-          <div className="pt-6">
-            <ResponsiveContainer width="100%" height={300}>
+          <div className="pt-6 sm:pt-8">
+            <ResponsiveContainer
+              width="100%"
+              height={250}
+              className="text-xs sm:text-sm"
+            >
               <BarChart data={monthlyData}>
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -218,14 +214,21 @@ export default function TopSelling() {
                   stroke="#9CA3AF"
                   axisLine={false}
                   tickLine={false}
+                  tick={{ fontSize: 12 }}
                 />
-                <YAxis stroke="#9CA3AF" axisLine={false} tickLine={false} />
+                <YAxis
+                  stroke="#9CA3AF"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "white dark:black",
+                    backgroundColor: "white",
                     border: "1px solid rgba(75, 85, 99, 0.5)",
                     borderRadius: "12px",
                     boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+                    fontSize: "12px",
                   }}
                   formatter={(value) => [`${value} ta`, "Sotuvlar"]}
                 />
@@ -233,7 +236,7 @@ export default function TopSelling() {
                   dataKey="sales"
                   fill="url(#colorSales)"
                   name="Sotuvlar"
-                  radius={[12, 12, 0, 0]}
+                  radius={[8, 8, 0, 0]}
                   animationDuration={1500}
                 />
                 <defs>
@@ -246,14 +249,20 @@ export default function TopSelling() {
             </ResponsiveContainer>
           </div>
         </div>
+
         {/* Brand Distribution */}
-        <div className="group relative bg-gradient-to-br  backdrop-blur-sm rounded-2xl   p-6  transition-all duration-300">
-          <div className="absolute -top-3 left-6 px-4 py-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-sm font-semibold text-white flex items-center gap-2">
-            <PieChartIcon className="w-4 h-4" />
-            Brend Bo'yicha Taqsimot
+        <div className="group relative bg-gradient-to-br backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 transition-all duration-300">
+          <div className="absolute -top-2 sm:-top-3 left-4 sm:left-6 px-3 sm:px-4 py-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-xs sm:text-sm font-semibold text-white flex items-center gap-2">
+            <PieChartIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Brend Bo'yicha Taqsimot</span>
+            <span className="sm:hidden">Brend Taqsimoti</span>
           </div>
-          <div className="pt-6">
-            <ResponsiveContainer width="100%" height={300}>
+          <div className="pt-6 sm:pt-8">
+            <ResponsiveContainer
+              width="100%"
+              height={250}
+              className="text-xs sm:text-sm"
+            >
               <PieChart>
                 <Pie
                   data={brandData}
@@ -261,10 +270,12 @@ export default function TopSelling() {
                   cy="50%"
                   labelLine={false}
                   label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(0)}%`
+                    window.innerWidth >= 640
+                      ? `${name}: ${(percent * 100).toFixed(0)}%`
+                      : `${(percent * 100).toFixed(0)}%`
                   }
-                  outerRadius={90}
-                  innerRadius={40}
+                  outerRadius={window.innerWidth < 640 ? 70 : 90}
+                  innerRadius={window.innerWidth < 640 ? 30 : 40}
                   paddingAngle={2}
                   dataKey="value"
                   animationDuration={1500}
@@ -285,20 +296,21 @@ export default function TopSelling() {
                     backdropFilter: "blur(8px)",
                     border: "1px solid rgba(75, 85, 99, 0.5)",
                     borderRadius: "12px",
+                    fontSize: "12px",
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
-            <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 sm:mt-6">
               {brandData.map((brand, index) => (
-                <div key={index} className="flex items-center gap-2">
+                <div key={index} className="flex items-center gap-1 sm:gap-2">
                   <div
-                    className="w-3 h-3 rounded-full"
+                    className="w-2 h-2 sm:w-3 sm:h-3 rounded-full"
                     style={{ backgroundColor: brand.color }}
                   />
-                  <span className="text-sm text-slate-300">{brand.name}</span>
-                  <span className="text-sm text-slate-500">
-                    {brand.value} ta
+                  <span className="text-xs sm:text-sm">{brand.name}</span>
+                  <span className="text-xs sm:text-sm text-slate-500 ml-1">
+                    {brand.value}
                   </span>
                 </div>
               ))}
@@ -308,103 +320,145 @@ export default function TopSelling() {
       </div>
 
       {/* Top Products Table */}
-      <div className="group relative bg-gradient-to-br backdrop-blur-sm rounded-2xl overflow-hidden hover:border-gray-600 transition-all duration-300">
-        <div className="absolute top-2   left-6 px-4 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-sm font-semibold text-white flex items-center gap-2">
-          <Award className="w-4 h-4" />
-          Eng Ko'p Sotilayotgan Modellar
+      <div className="group relative bg-gradient-to-br backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300">
+        <div className="absolute top-2 left-4 sm:left-6 px-3 sm:px-4 py-1 bg-gradient-to-r from-zinc-900 to-zinc-800 rounded-full text-xs sm:text-sm font-semibold text-white flex items-center gap-2">
+          <Award className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="hidden xs:inline">
+            Eng Ko'p Sotilayotgan Modellar
+          </span>
+          <span className="xs:hidden">Top Modellar</span>
         </div>
 
-        <div className="px-6 pt-8 pb-4">
-          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-sm font-medium ">
+        <div className="px-3 sm:px-4 md:px-6 pt-6 sm:pt-8 pb-4">
+          {/* Table Header - Hidden on mobile, shown on tablet and up */}
+          <div className="hidden sm:grid grid-cols-12 gap-3 md:gap-4 px-2 md:px-4 py-3 text-sm font-medium">
             <div className="col-span-1">#</div>
             <div className="col-span-3">Model</div>
             <div className="col-span-2">Brend</div>
             <div className="col-span-2">Sotuvlar</div>
             <div className="col-span-2">Daromad</div>
-            <div className="col-span-2">Reyting</div>
           </div>
 
-          <div className="space-y-2 mt-2">
+          <div className="space-y-2 sm:space-y-3 mt-2">
             {topPhones.map((phone, index) => (
               <div
                 key={phone.id}
-                className="group/item grid grid-cols-12 gap-4 px-4 py-4 rounded-xl cursor-pointer hover-lift shadow-glow"
+                className="group/item rounded-xl sm:rounded-lg cursor-pointer hover-lift shadow-glow p-3 sm:p-4"
               >
-                <div className="col-span-1 flex items-center">
-                  <div className="relative">
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                        index === 0
-                          ? "bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border border-yellow-500/30"
-                          : index === 1
-                          ? "bg-gradient-to-br from-gray-400/20 to-gray-500/20 border border-gray-500/30"
-                          : index === 2
-                          ? "bg-gradient-to-br from-amber-700/20 to-amber-800/20 border border-amber-700/30"
-                          : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700"
-                      }`}
-                    >
-                      <span className="text-lg font-bold">
-                        {index === 0
-                          ? "1"
-                          : index === 1
-                          ? "2"
-                          : index === 2
-                          ? "3"
-                          : index + 1}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-span-3 flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br  flex items-center justify-center text-2xl">
-                    {phone.image}
-                  </div>
-                  <div>
-                    <div className="font-semibold">{phone.name}</div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Zap className="w-3 h-3 text-amber-500" />
-                      <span className="text-emerald-400">{phone.growth}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-span-2 flex items-center">
-                  <div className="px-3 py-1.5 rounded-lg  border border-gray-700">
-                    <span className=" font-medium">{phone.brand}</span>
-                  </div>
-                </div>
-
-                <div className="col-span-2 flex items-center">
-                  <div className="text-blue-400 font-bold text-lg">
-                    {phone.sold}
-                  </div>
-                  <div className="ml-2 text-xs text-slate-500">ta</div>
-                </div>
-
-                <div className="col-span-2 flex items-center">
-                  <div className="text-emerald-400 font-bold text-lg">
-                    ${(phone.revenue / 1000).toFixed(0)}K
-                  </div>
-                </div>
-
-                <div className="col-span-2 flex items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(phone.rating)
-                              ? "fill-amber-500 text-amber-500"
-                              : "fill-gray-700 text-black-600"
+                {/* Mobile View */}
+                <div className="sm:hidden space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                            index === 0
+                              ? "bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border border-yellow-500/30"
+                              : index === 1
+                              ? "bg-gradient-to-br from-gray-400/20 to-gray-500/20 border border-gray-500/30"
+                              : index === 2
+                              ? "bg-gradient-to-br from-amber-700/20 to-amber-800/20 border border-amber-700/30"
+                              : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700"
                           }`}
-                        />
-                      ))}
+                        >
+                          <span className="text-lg font-bold">{index + 1}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-semibold">{phone.name}</div>
+                        <div className="flex items-center gap-1 mt-1">
+                          <div className="px-2 py-1 rounded text-xs border border-gray-700">
+                            {phone.brand}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-white font-semibold ml-2">
-                      {phone.rating}
-                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-xs text-slate-500">Sotuvlar</div>
+                      <div className="text-blue-400 font-bold">
+                        {phone.sold} ta
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-500">Daromad</div>
+                      <div className="text-emerald-400 font-bold">
+                        ${(phone.revenue / 1000).toFixed(0)}K
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop/Tablet View */}
+                <div className="hidden sm:grid grid-cols-12 gap-3 md:gap-4">
+                  <div className="col-span-1 flex items-center">
+                    <div className="relative">
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          index === 0
+                            ? "bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border border-yellow-500/30"
+                            : index === 1
+                            ? "bg-gradient-to-br from-gray-400/20 to-gray-500/20 border border-gray-500/30"
+                            : index === 2
+                            ? "bg-gradient-to-br from-amber-700/20 to-amber-800/20 border border-amber-700/30"
+                            : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700"
+                        }`}
+                      >
+                        <span className="text-lg font-bold">{index + 1}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-3 flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center text-2xl">
+                      {phone.image}
+                    </div>
+                    <div>
+                      <div className="font-semibold">{phone.name}</div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Zap className="w-3 h-3 text-amber-500" />
+                        <span className="text-emerald-400 text-xs">
+                          {phone.growth}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 flex items-center">
+                    <div className="px-3 py-1.5 rounded-lg border border-gray-700">
+                      <span className="font-medium">{phone.brand}</span>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 flex items-center">
+                    <div className="text-blue-400 font-bold">{phone.sold}</div>
+                    <div className="ml-2 text-sm text-slate-500">ta</div>
+                  </div>
+
+                  <div className="col-span-2 flex items-center">
+                    <div className="text-emerald-400 font-bold">
+                      ${(phone.revenue / 1000).toFixed(0)}K
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 flex items-center">
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < Math.floor(phone.rating)
+                                ? "fill-amber-500 text-amber-500"
+                                : "fill-gray-700"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-semibold ml-2">{phone.rating}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -412,6 +466,7 @@ export default function TopSelling() {
           </div>
         </div>
       </div>
+
       <style jsx>{`
         @keyframes fadeIn {
           from {
@@ -428,15 +483,28 @@ export default function TopSelling() {
         }
 
         .shadow-glow {
-          box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
+          box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
         }
 
         .hover-lift {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .hover-lift:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          transform: translateY(-2px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Extra small devices */
+        @media (min-width: 375px) {
+          .xs\\:grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+          .xs\\:inline {
+            display: inline !important;
+          }
+          .xs\\:hidden {
+            display: none !important;
+          }
         }
       `}</style>
     </div>

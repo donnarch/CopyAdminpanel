@@ -60,7 +60,7 @@ const demoSales = [
     note: "2 oy kafolat",
     payment: "card",
     image:
-      "https://cdn-files.kimovil.com/default/0008/83/thumb_782823_default_big.jpg",
+      "https://goodmi.ru/images/cp_blog_post/124/%D0%91%D0%B5%D0%B7_%D0%B8%D0%BC%D0%B5%D0%BD%D0%B8-1.jpg",
   },
   {
     id: "s4",
@@ -178,31 +178,37 @@ function SalesFiltersBar({
   onClear,
 }) {
   return (
-    <div className="rounded-lg  p-4">
+    <div
+      className="
+     px-4 py-2 text-sm  
+     text-black 
+    focus:border-blue-500 focus:outline-none
+  "
+    >
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <input
           type="text"
           placeholder="Qidirish..."
           value={query}
           onChange={(e) => onQuery(e.target.value)}
-          className="rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-sm text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-600  px-4 py-2 text-sm  placeholder-slate-400 focus:border-blue-500 focus:outline-none"
         />
         <input
           type="date"
           value={from}
           onChange={(e) => onFrom(e.target.value)}
-          className="rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-600  px-4 py-2 text-sm  dark:text-white  focus:border-blue-500 focus:outline-none"
         />
         <input
           type="date"
           value={to}
           onChange={(e) => onTo(e.target.value)}
-          className="rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-600  px-4 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none"
         />
         <select
           value={payment}
           onChange={(e) => onPayment(e.target.value)}
-          className="rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-600  px-4 py-2 text-sm  focus:border-blue-500 focus:outline-none"
         >
           <option value="all">Barcha to'lovlar</option>
           <option value="cash">Naqd</option>
@@ -213,7 +219,7 @@ function SalesFiltersBar({
       {(query || from || to || payment !== "all") && (
         <button
           onClick={onClear}
-          className="mt-3 text-sm text-blue-400 hover:text-blue-300"
+          className="mt-3 ml-2 text-sm text-blue-400 hover:text-blue-300 text-shadow-indigo-50 "
         >
           Tozalash
         </button>
@@ -221,20 +227,19 @@ function SalesFiltersBar({
     </div>
   );
 }
-
 function SaleCard({ item, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden hover:border-blue-500 transition cursor-pointer hover:shadow-lg hover:shadow-blue-500/20"
+      className=" rounded-lg  overflow-hidden hover:border-blue-500 transition cursor-pointer hover:shadow-lg hover:shadow-blue-500/20"
     >
       {/* Image - Medium Size */}
-      <div className="relative h-80 bg-slate-700 flex items-center justify-center overflow-hidden">
+      <div className="relative h-65  bg-slate-200 flex items-center justify-center overflow-hidden">
         {item.image ? (
           <img
             src={item.image}
             alt={item.model}
-            className="w-full h-full object-cover hover:scale-105 transition rounded"
+            className="w-80 h-55 object-cover hover:scale-105 transition rounded"
           />
         ) : (
           <Smartphone className="w-12 h-12 text-slate-500" />
@@ -243,44 +248,34 @@ function SaleCard({ item, onClick }) {
 
       {/* Info */}
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-white">{item.model}</h3>
-        <p className="text-sm text-slate-400 mb-3">{item.brand}</p>
-
+        <h3 className="text-lg font-semibold ">{item.model}</h3>
+        <p className="text-sm text-slate-700 mb-3">{item.brand}</p>
         {/* Tags */}
         <div className="flex gap-2 mb-4">
-          <span className="px-2 py-1 bg-blue-600/30 text-blue-300 text-xs rounded">
+          <span className="px-2 py-1 bg-blue-600/30  text-xs rounded">
             {item.storage}GB
           </span>
-          <span className="px-2 py-1 bg-purple-600/30 text-purple-300 text-xs rounded">
+          <span className="px-2 py-1 bg-purple-600/30 text-purple-800 text-xs rounded">
             {item.color}
           </span>
         </div>
-
         {/* Price */}
-        <div className="space-y-2 pb-4 border-b border-slate-700">
-          <div className="flex justify-between text-sm"></div>
-          <div className="flex justify-between text-sm">
-            <span className="text-white font-semibold">
-              {money(item.sellPrice)}
-            </span>
+        <div className="space-y-2 pb-2 border-b border-slate-400">
+          <div>
+            <span className=" font-semibold">{money(item.sellPrice)}</span>
           </div>
         </div>
-        <div className="mt-4 pt-4 border-t border-slate-700"></div>
-
         {/* Click to view */}
-        <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg transition">
+        <button className="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white text-sm py-3 rounded-lg transition">
           Batafsil
         </button>
       </div>
     </div>
   );
 }
-
 function SaleDetailsModal({ open, data, onClose }) {
   if (!open || !data) return null;
-
   const profit = data.sellPrice - data.buyPrice;
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center "
@@ -300,7 +295,6 @@ function SaleDetailsModal({ open, data, onClose }) {
             <X className="w-6 h-6" />
           </button>
         </div>
-
         {/* Image - Medium Size */}
         <div className="w-full h-48 rounded-lg overflow-hidden bg-slate-700 flex items-center justify-center mb-6">
           {data.image ? (
@@ -313,7 +307,6 @@ function SaleDetailsModal({ open, data, onClose }) {
             <Smartphone className="w-16 h-16 text-slate-500" />
           )}
         </div>
-
         {/* Brand & Details */}
         <div className="mb-6">
           <p className="text-slate-400 text-sm mb-3">{data.brand}</p>
@@ -366,7 +359,6 @@ function SaleDetailsModal({ open, data, onClose }) {
             </div>
           )}
         </div>
-
         {/* Pricing */}
         <div className="bg-slate-700/50 rounded-lg p-4 mb-6 space-y-3">
           <div className="flex justify-between">
@@ -388,7 +380,6 @@ function SaleDetailsModal({ open, data, onClose }) {
             </span>
           </div>
         </div>
-
         <button
           onClick={onClose}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
@@ -399,7 +390,6 @@ function SaleDetailsModal({ open, data, onClose }) {
     </div>
   );
 }
-
 export default function SoldPhones() {
   const [sales] = useState(demoSales);
   const [query, setQuery] = useState("");
@@ -408,9 +398,7 @@ export default function SoldPhones() {
   const [payment, setPayment] = useState("all");
   const [selected, setSelected] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
   const itemsPerPage = 3; // 3 cards per page
-
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return sales.filter((s) => {
@@ -428,16 +416,13 @@ export default function SoldPhones() {
       return matchQuery && matchPayment && matchFrom && matchTo;
     });
   }, [sales, query, from, to, payment]);
-
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = filtered.slice(startIndex, endIndex);
-
   useMemo(() => {
     setCurrentPage(1);
   }, [query, from, to, payment]);
-
   const summary = useMemo(() => {
     const count = filtered.length;
     const revenue = filtered.reduce((sum, s) => sum + s.sellPrice, 0);
@@ -445,12 +430,10 @@ export default function SoldPhones() {
     const profit = revenue - cost;
     return { count, revenue, profit };
   }, [filtered]);
-
   return (
     <div className="min-h-screen  p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4"></div>
         <SalesFiltersBar
           query={query}
           onQuery={setQuery}
@@ -479,9 +462,8 @@ export default function SoldPhones() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <Smartphone className="w-16 h-16 text-slate-600 mx-auto mb-4" />
             <p className="text-slate-400 text-lg">
-              Hech qanday telefon topilmadi
+              HECH QANDAY TELEFON TOPILMADI NIGGA
             </p>
           </div>
         )}
@@ -490,11 +472,10 @@ export default function SoldPhones() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-2 rounded-lg border border-slate-700 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="p-2 rounded-lg border border-slate-700  disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-
             <div className="flex gap-2">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (page) => (
@@ -503,8 +484,8 @@ export default function SoldPhones() {
                     onClick={() => setCurrentPage(page)}
                     className={`px-4 py-2 rounded-lg font-semibold transition ${
                       currentPage === page
-                        ? "bg-blue-600 text-white"
-                        : "border border-slate-700 text-slate-300 hover:bg-slate-700"
+                        ? "bg-blue-600 "
+                        : "border border-slate-700  "
                     }`}
                   >
                     {page}
@@ -512,11 +493,10 @@ export default function SoldPhones() {
                 )
               )}
             </div>
-
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-lg border border-slate-700 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition text-white"
+              className="p-2 rounded-lg border border-slate-700 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               <ChevronRight className="w-5 h-5" />
             </button>

@@ -57,11 +57,10 @@ export default function Settings() {
 
   return (
     <div className="p-6  min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold flex items-center gap-2">
           <SettingsIcon className="w-8 h-8" /> Sozlamalar
         </h1>
-        <p className="text-slate-400">Admin panel sozlamalarini boshqaring</p>
       </div>
 
       {savedMessage && (

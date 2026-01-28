@@ -15,10 +15,8 @@ function CustomBarTooltip({ active, payload, label, formatMoney, darkMode }) {
   return (
     <div
       className={`
-      ${
-        darkMode ? "bg-black-900 border-none" : "bg-white border-none"
-      } 
-      border rounded-lg p-4 shadow-xl backdrop-blur-sm
+      ${darkMode ? "bg-gray-900 border-none" : "bg-white border-none"} 
+      border rounded-lg p-3 sm:p-4 shadow-xl backdrop-blur-sm text-xs sm:text-sm
     `}
     >
       <p
@@ -30,15 +28,18 @@ function CustomBarTooltip({ active, payload, label, formatMoney, darkMode }) {
         {label}
       </p>
       {payload.map((entry, i) => (
-        <div key={i} className="flex items-center justify-between gap-4 mb-1">
+        <div
+          key={i}
+          className="flex items-center justify-between gap-2 sm:gap-4 mb-1"
+        >
           <div className="flex items-center gap-2">
             <div
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ backgroundColor: entry.color }}
             />
             <span
               className={`
-              text-sm capitalize
+              text-xs sm:text-sm capitalize whitespace-nowrap
               ${darkMode ? "text-gray-300" : "text-gray-700"}
             `}
             >
@@ -47,7 +48,7 @@ function CustomBarTooltip({ active, payload, label, formatMoney, darkMode }) {
           </div>
           <span
             className={`
-            text-sm font-bold
+            text-xs sm:text-sm font-bold whitespace-nowrap
             ${darkMode ? "text-white" : "text-gray-900"}
           `}
           >
@@ -68,7 +69,7 @@ export function BarChartSection({
 }) {
   const colors = {
     sales: {
-      fill: darkMode ? "#3b82f6" : "#60a5fa", 
+      fill: darkMode ? "#3b82f6" : "#60a5fa",
       stroke: darkMode ? "#2563eb" : "#1d4ed8",
       light: darkMode ? "#3b82f6" : "#93c5fd",
     },
@@ -85,56 +86,62 @@ export function BarChartSection({
     grid: darkMode ? "#374151" : "#d1d5db",
     axis: darkMode ? "#9ca3af" : "#6b7280",
   };
+
   return (
     <div
       className={`
       ${
         darkMode
-          ? "bg-gradient-to-br from-black-900 to-black-950 border-none shadow-lg shadow-gray-900/20"
+          ? "bg-gradient-to-br border-none shadow-lg shadow-gray-900/20"
           : "bg-white border-none shadow-lg shadow-gray-200/50"
       } 
-      rounded-xl border p-5 mb-8 transition-colors
+      rounded-lg sm:rounded-xl border p-3 sm:p-4 md:p-5 mb-6 sm:mb-8 transition-colors
     `}
     >
-      <div className="flex items-center justify-between mb-6">
+      {/* Legend - Responsive Grid */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
         <div></div>
-        <div className="flex items-center gap-3">
+
+        {/* Legend Items - Stack on mobile, row on tablet+ */}
+        <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 w-full sm:w-auto">
           <div className="flex items-center gap-2">
             <div
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ backgroundColor: colors.sales.light }}
-            ></div>
+            />
             <span
               className={`
-              text-sm
+              text-xs sm:text-sm whitespace-nowrap
               ${darkMode ? "text-gray-400" : "text-gray-600"}
             `}
             >
               Sotuvlar
             </span>
           </div>
+
           <div className="flex items-center gap-2">
             <div
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ backgroundColor: colors.profit.light }}
-            ></div>
+            />
             <span
               className={`
-              text-sm
+              text-xs sm:text-sm whitespace-nowrap
               ${darkMode ? "text-gray-400" : "text-gray-600"}
             `}
             >
               Foyda
             </span>
           </div>
+
           <div className="flex items-center gap-2">
             <div
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ backgroundColor: colors.expenses.light }}
-            ></div>
+            />
             <span
               className={`
-              text-sm
+              text-xs sm:text-sm whitespace-nowrap
               ${darkMode ? "text-gray-400" : "text-gray-600"}
             `}
             >
@@ -143,9 +150,19 @@ export function BarChartSection({
           </div>
         </div>
       </div>
-      <div className="h-64">
+
+      {/* Chart - Responsive Height */}
+      <div className="w-full h-48 sm:h-56 md:h-64 lg:h-72 -mx-3 sm:-mx-4 md:-mx-5 px-3 sm:px-4 md:px-5">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={barChartData}>
+          <BarChart
+            data={barChartData}
+            margin={{
+              top: 10,
+              right: 10,
+              left: -20,
+              bottom: 0,
+            }}
+          >
             <CartesianGrid
               strokeDasharray="3 3"
               stroke={colors.grid}
@@ -156,13 +173,18 @@ export function BarChartSection({
               stroke={colors.axis}
               axisLine={false}
               tickLine={false}
-              fontSize={12}
+              fontSize={11}
+              tick={{ fontSize: 12 }}
+              interval={0}
+              angle={0}
             />
             <YAxis
               stroke={colors.axis}
               axisLine={false}
               tickLine={false}
-              fontSize={12}
+              fontSize={11}
+              width={40}
+              tick={{ fontSize: 12 }}
             />
             <Tooltip
               content={
@@ -176,7 +198,13 @@ export function BarChartSection({
                   ? "rgba(255, 255, 255, 0.05)"
                   : "rgba(0, 0, 0, 0.05)",
               }}
+              contentStyle={{
+                backgroundColor: "transparent",
+                border: "none",
+                padding: "0",
+              }}
             />
+
             <Bar
               dataKey="sales"
               name="Sotuvlar"
@@ -184,6 +212,7 @@ export function BarChartSection({
               fill={colors.sales.fill}
               stroke={colors.sales.stroke}
               strokeWidth={1}
+              isAnimationActive={true}
             >
               {barChartData.map((entry, index) => (
                 <Cell
@@ -194,6 +223,7 @@ export function BarChartSection({
                 />
               ))}
             </Bar>
+
             <Bar
               dataKey="profit"
               name="Foyda"
@@ -201,6 +231,7 @@ export function BarChartSection({
               fill={colors.profit.fill}
               stroke={colors.profit.stroke}
               strokeWidth={1}
+              isAnimationActive={true}
             >
               {barChartData.map((entry, index) => (
                 <Cell
@@ -211,6 +242,7 @@ export function BarChartSection({
                 />
               ))}
             </Bar>
+
             <Bar
               dataKey="expenses"
               name="Xarajatlar"
@@ -218,6 +250,7 @@ export function BarChartSection({
               fill={colors.expenses.fill}
               stroke={colors.expenses.stroke}
               strokeWidth={1}
+              isAnimationActive={true}
             >
               {barChartData.map((entry, index) => (
                 <Cell
