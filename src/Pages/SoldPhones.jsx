@@ -181,7 +181,7 @@ function SalesFiltersBar({
     <div
       className="
      px-4 py-2 text-sm  
-     text-black 
+      
     focus:border-blue-500 focus:outline-none
   "
     >
@@ -191,24 +191,24 @@ function SalesFiltersBar({
           placeholder="Qidirish..."
           value={query}
           onChange={(e) => onQuery(e.target.value)}
-          className="rounded-lg border border-slate-600  px-4 py-2 text-sm  placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border  border-slate-300  px-4 py-2 text-sm  placeholder-slate-400 focus:border-blue-500 focus:outline-none"
         />
         <input
           type="date"
           value={from}
           onChange={(e) => onFrom(e.target.value)}
-          className="rounded-lg border border-slate-600  px-4 py-2 text-sm  dark:text-white  focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-300  px-4 py-2 text-sm  dark:text-white  focus:border-blue-500 focus:outline-none"
         />
         <input
           type="date"
           value={to}
           onChange={(e) => onTo(e.target.value)}
-          className="rounded-lg border border-slate-600  px-4 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-300  px-4 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none"
         />
         <select
           value={payment}
           onChange={(e) => onPayment(e.target.value)}
-          className="rounded-lg border border-slate-600  px-4 py-2 text-sm  focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-300  px-4 py-2 text-sm  focus:border-blue-500 focus:outline-none"
         >
           <option value="all">Barcha to'lovlar</option>
           <option value="cash">Naqd</option>
@@ -282,29 +282,26 @@ function SaleDetailsModal({ open, data, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-slate-800 rounded-lg p-6 max-w-lg w-full mx-4 border border-slate-700 max-h-[90vh] overflow-y-auto"
+        className="bg-slate-200 rounded-lg p-6 max-w-lg w-full mx-4 border border-slate-700 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-2xl font-bold text-white">{data.model}</h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white transition"
-          >
+          <h2 className="text-2xl font-bold ">{data.model}</h2>
+          <button onClick={onClose} className=" hover:text-white transition">
             <X className="w-6 h-6" />
           </button>
         </div>
         {/* Image - Medium Size */}
-        <div className="w-full h-48 rounded-lg overflow-hidden bg-slate-700 flex items-center justify-center mb-6">
+        <div className="w-full h-48 rounded-lg overflow-hidden  flex items-center justify-center mb-6">
           {data.image ? (
             <img
               src={data.image}
               alt={data.model}
-              className="w-40 h-40 object-cover"
+              className="w-100 h-50 object-cover"
             />
           ) : (
-            <Smartphone className="w-16 h-16 text-slate-500" />
+            <Smartphone className="w-16 h-16 " />
           )}
         </div>
         {/* Brand & Details */}
@@ -323,28 +320,28 @@ function SaleDetailsModal({ open, data, onClose }) {
         {/* Details */}
         <div className="space-y-3 mb-6 pb-6 border-b border-slate-700">
           <div className="flex items-center gap-3">
-            <Phone className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-400">IMEI:</span>
-            <span className="text-white font-mono text-sm">{data.imei}</span>
+            <Phone className="w-4 h-4 " />
+            <span>IMEI:</span>
+            <span className=" font-mono text-sm">{data.imei}</span>
           </div>
           <div className="flex items-center gap-3">
-            <Calendar className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-400">Sana:</span>
-            <span className="text-white">{data.soldAt}</span>
+            <Calendar className="w-4 h-4 " />
+            <span className="">Sana:</span>
+            <span>{data.soldAt}</span>
           </div>
           <div className="flex items-center gap-3">
-            <User className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-400">Mijoz:</span>
-            <span className="text-white">{data.customerName}</span>
+            <User className="w-4 h-4 " />
+            <span>Mijoz:</span>
+            <span>{data.customerName}</span>
           </div>
           <div className="flex items-center gap-3">
-            <Phone className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-400">Telefon:</span>
-            <span className="text-white">{data.customerPhone}</span>
+            <Phone className="w-4 h-4 " />
+            <span>Telefon:</span>
+            <span>{data.customerPhone}</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-slate-400">To'lov:</span>
-            <span className="px-2 py-1 bg-slate-700 rounded text-white text-sm capitalize">
+            <span className="">To'lov:</span>
+            <span className="px-2 py-1 bg-slate-300 rounded text-sm capitalize font-bold">
               {data.payment === "cash"
                 ? "Naqd"
                 : data.payment === "card"
@@ -354,24 +351,20 @@ function SaleDetailsModal({ open, data, onClose }) {
           </div>
           {data.note && (
             <div className="flex gap-3">
-              <span className="text-slate-400">Izoh:</span>
-              <span className="text-white">{data.note}</span>
+              <span>Izoh:</span>
+              <span>{data.note}</span>
             </div>
           )}
         </div>
         {/* Pricing */}
-        <div className="bg-slate-700/50 rounded-lg p-4 mb-6 space-y-3">
+        <div className="bg-slate-300/50 rounded-lg p-4 mb-6 space-y-3">
           <div className="flex justify-between">
-            <span className="text-slate-400">Xarid narxi</span>
-            <span className="text-white font-semibold">
-              {money(data.buyPrice)}
-            </span>
+            <span>Xarid narxi</span>
+            <span className=" font-semibold">{money(data.buyPrice)}</span>
           </div>
           <div className="flex justify-between border-t border-slate-600 pt-3">
-            <span className="text-slate-400">Sotish narxi</span>
-            <span className="text-white font-semibold">
-              {money(data.sellPrice)}
-            </span>
+            <span>Sotish narxi</span>
+            <span className=" font-semibold">{money(data.sellPrice)}</span>
           </div>
           <div className="flex justify-between border-t border-slate-600 pt-3">
             <span className="text-green-400 font-semibold">Sof Foyda</span>

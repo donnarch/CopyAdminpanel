@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   Plus,
   Trash2,
@@ -17,6 +17,13 @@ import {
   Palette,
   Barcode,
   TrendingUp,
+  Filter,
+  MoreVertical,
+  Download,
+  Upload,
+  Menu,
+  Grid,
+  List,
 } from "lucide-react";
 
 /* ------------------ DEMO DATA ------------------ */
@@ -116,15 +123,35 @@ export default function Inventory() {
   const [selectedPhone, setSelectedPhone] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [viewMode, setViewMode] = useState("table"); // 'table' yoki 'grid'
+  const [isMobile, setIsMobile] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Ekran o'lchamini kuzatish
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 768) {
+        setViewMode("grid");
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const filtered = useMemo(() => {
-    return phones.filter(
-      (p) =>
+    return phones.filter((p) => {
+      const matchesSearch =
         p.model.toLowerCase().includes(query.toLowerCase()) ||
         p.brand.toLowerCase().includes(query.toLowerCase()) ||
-        p.imei.includes(query)
-    );
-  }, [phones, query]);
+        p.imei.includes(query);
+      const matchesStatus = statusFilter === "all" || p.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [phones, query, statusFilter]);
 
   const paginatedPhones = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -166,322 +193,508 @@ export default function Inventory() {
   };
 
   const handleDelete = (id) => {
-    setPhones((prev) => prev.filter((p) => p.id !== id));
+    if (window.confirm("Ushbu telefonni rostdan ham o'chirmoqchimisiz?")) {
+      setPhones((prev) => prev.filter((p) => p.id !== id));
+    }
+  };
+
+  // Export funksiyasi (soddalashtirilgan)
+  const handleExport = () => {
+    alert(
+      "Export funksiyasi ishga tushdi! Haqiqiy loyihada fayl yuklab olinadi."
+    );
+  };
+
+  // Import funksiyasi (soddalashtirilgan)
+  const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".xlsx,.csv";
+    input.onchange = (e) => {
+      alert("Fayl tanlandi! Haqiqiy loyihada import qilinadi.");
+    };
+    input.click();
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 p-4 sm:p-6">
+    <div className="min-h-screen bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 p-3 sm:p-4 md:p-6 transition-colors">
       <div className="max-w-7xl mx-auto">
-        {/* HEADER */}
+        {/* HEADER - Mobile optimallashtirilgan */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">
-              Ombor (Telefonlar)
-            </h1>
-            <p className="text-zinc-600 dark:text-zinc-400 text-sm sm:text-base">
-              Barcha telefonlar ro'yxati
-            </p>
+          <div className="w-full sm:w-auto">
+            <div className="flex items-center justify-between sm:block">
+              <div>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white mb-1">
+                  Telefonlar Ombori
+                </h1>
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                  Barcha telefonlar ro'yxati
+                </p>
+              </div>
+              {/* Mobile menu toggle */}
+              {isMobile && (
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="p-2 rounded-lg border border-zinc-300 dark:border-zinc-700 sm:hidden"
+                >
+                  <Menu size={20} />
+                </button>
+              )}
+            </div>
           </div>
-          <button
-            onClick={() => {
-              setEditingPhone(null);
-              setOpenForm(true);
-            }}
-            className="flex items-center justify-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg transition-all w-full sm:w-auto text-sm sm:text-base"
-          >
-            <Plus size={18} className="sm:w-5 sm:h-5" />
-            <span>Yangi telefon</span>
-          </button>
+
+          {/* Actions - Mobile va Desktop */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            {/* Mobile view mode toggle */}
+            {!isMobile && (
+              <div className="hidden sm:flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg">
+                <button
+                  onClick={() => setViewMode("table")}
+                  className={`p-2 rounded ${
+                    viewMode === "table"
+                      ? "bg-white dark:bg-zinc-700 shadow-sm"
+                      : ""
+                  }`}
+                >
+                  <List size={16} />
+                </button>
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded ${
+                    viewMode === "grid"
+                      ? "bg-white dark:bg-zinc-700 shadow-sm"
+                      : ""
+                  }`}
+                >
+                  <Grid size={16} />
+                </button>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleImport}
+                className="flex items-center justify-center gap-2 px-3 py-2.5 sm:px-4 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-xs sm:text-sm flex-1 sm:flex-none"
+              >
+                <Upload size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Import</span>
+              </button>
+              <button
+                onClick={handleExport}
+                className="flex items-center justify-center gap-2 px-3 py-2.5 sm:px-4 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-xs sm:text-sm flex-1 sm:flex-none"
+              >
+                <Download size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Export</span>
+              </button>
+              <button
+                onClick={() => {
+                  setEditingPhone(null);
+                  setOpenForm(true);
+                }}
+                className="flex items-center justify-center gap-2 px-3 py-2.5 sm:px-4 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors text-xs sm:text-sm flex-1 sm:flex-none"
+              >
+                <Plus size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Yangi telefon</span>
+                <span className="xs:hidden">Qo'shish</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        {/* STATS - Responsive grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Stat
             label="Jami"
             value={stats.total}
-            icon={<Package size={20} className="sm:w-6 sm:h-6" />}
+            icon={
+              <Package
+                className="text-blue-600 dark:text-blue-400"
+                size={isMobile ? 16 : 20}
+              />
+            }
+            compact={isMobile}
           />
           <Stat
             label="Omborda"
             value={stats.inStock}
-            icon={<ShoppingCart size={20} className="sm:w-6 sm:h-6" />}
+            icon={
+              <ShoppingCart
+                className="text-emerald-600 dark:text-emerald-400"
+                size={isMobile ? 16 : 20}
+              />
+            }
+            compact={isMobile}
           />
           <Stat
             label="Sotilgan"
             value={stats.sold}
-            icon={<DollarSign size={20} className="sm:w-6 sm:h-6" />}
+            icon={
+              <DollarSign
+                className="text-violet-600 dark:text-violet-400"
+                size={isMobile ? 16 : 20}
+              />
+            }
+            compact={isMobile}
           />
           <Stat
             label="Foyda"
-            value={`${stats.profit.toLocaleString()} so'm`}
-            icon={<TrendingUp size={20} className="sm:w-6 sm:h-6" />}
+            value={`${(stats.profit / 1000000).toFixed(1)}M`}
+            subtitle="so'm"
+            icon={
+              <TrendingUp
+                className="text-amber-600 dark:text-amber-400"
+                size={isMobile ? 16 : 20}
+              />
+            }
+            compact={isMobile}
           />
         </div>
 
-        {/* SEARCH */}
-        <div className="mb-4 sm:mb-6 relative">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
-            size={18}
-          />
-          <input
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-            placeholder="Model, brend yoki IMEI bo'yicha qidirish..."
-            className="w-full pl-10 pr-4 py-2 sm:py-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-          />
-        </div>
-
-        {/* TABLE - Mobile card view / Desktop table view */}
-        <div className="rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
-          {/* Desktop table */}
-          <div className="hidden lg:block">
-            <table className="w-full">
-              <thead className="bg-zinc-100 dark:bg-zinc-800">
-                <tr>
-                  {["Telefon", "IMEI", "Holat", "Narx", "Sana", "Amallar"].map(
-                    (h) => (
-                      <th
-                        key={h}
-                        className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider"
-                      >
-                        {h}
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                {paginatedPhones.length > 0 ? (
-                  paginatedPhones.map((p) => (
-                    <tr
-                      key={p.id}
-                      className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
-                    >
-                      <td className="px-4 sm:px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={p.image}
-                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
-                            alt={p.model}
-                          />
-                          <div>
-                            <p className="font-semibold text-sm sm:text-base">
-                              {p.model}
-                            </p>
-                            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-                              {p.brand}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <div className="font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
-                          {p.imei}
-                        </div>
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <StatusBadge status={p.status} />
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <div className="font-semibold text-green-600 dark:text-green-400 text-sm sm:text-base">
-                          {p.sellPrice > 0
-                            ? `${p.sellPrice.toLocaleString()} so'm`
-                            : "-"}
-                        </div>
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <div className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-                          {p.createdAt}
-                        </div>
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <div className="flex gap-1 sm:gap-2">
-                          <button
-                            onClick={() => setSelectedPhone(p)}
-                            className="p-1.5 sm:p-2 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition-colors"
-                            title="Ko'rish"
-                          >
-                            <Eye size={16} className="sm:w-5 sm:h-5" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingPhone(p);
-                              setOpenForm(true);
-                            }}
-                            className="p-1.5 sm:p-2 rounded-md hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400 transition-colors"
-                            title="Tahrirlash"
-                          >
-                            <Edit2 size={16} className="sm:w-5 sm:h-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(p.id)}
-                            className="p-1.5 sm:p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
-                            title="O'chirish"
-                          >
-                            <Trash2 size={16} className="sm:w-5 sm:h-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="text-center py-12">
-                      <Smartphone className="mx-auto mb-4 text-zinc-400 dark:text-zinc-600 w-12 h-12" />
-                      <p className="text-zinc-600 dark:text-zinc-400">
-                        Hech qanday telefon topilmadi
-                      </p>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile card view */}
-          <div className="lg:hidden">
-            <div className="space-y-3 p-3 sm:p-4">
-              {paginatedPhones.length > 0 ? (
-                paginatedPhones.map((p) => (
-                  <div
-                    key={p.id}
-                    className="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-4"
-                  >
-                    <div className="flex gap-3">
-                      <img
-                        src={p.image}
-                        className="w-16 h-16 rounded-lg object-cover"
-                        alt={p.model}
-                      />
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold text-sm sm:text-base">
-                              {p.model}
-                            </h3>
-                            <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                              {p.brand}
-                            </p>
-                          </div>
-                          <StatusBadge status={p.status} />
-                        </div>
-
-                        <div className="mt-2 space-y-1">
-                          <div className="flex items-center gap-2 text-xs">
-                            <Barcode size={12} className="text-zinc-500" />
-                            <span className="font-mono">{p.imei}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs">
-                            <Palette size={12} className="text-zinc-500" />
-                            <span>{p.color}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs">
-                            <Cpu size={12} className="text-zinc-500" />
-                            <span>{p.storage}GB</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs">
-                            <Calendar size={12} className="text-zinc-500" />
-                            <span>{p.createdAt}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
-                          <div>
-                            <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                              Narx
-                            </p>
-                            <p className="font-semibold text-green-600 dark:text-green-400">
-                              {p.sellPrice > 0
-                                ? `${p.sellPrice.toLocaleString()} so'm`
-                                : "-"}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => setSelectedPhone(p)}
-                              className="p-1.5 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                            >
-                              <Eye size={16} />
-                            </button>
-                            <button
-                              onClick={() => {
-                                setEditingPhone(p);
-                                setOpenForm(true);
-                              }}
-                              className="p-1.5 rounded-md hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400"
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(p.id)}
-                              className="p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <Smartphone className="mx-auto mb-4 text-zinc-400 dark:text-zinc-600 w-12 h-12" />
-                  <p className="text-zinc-600 dark:text-zinc-400">
-                    Hech qanday telefon topilmadi
-                  </p>
-                </div>
+        {/* FILTERS & SEARCH - Mobile optimallashtirilgan */}
+        <div
+          className={`bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 sm:p-4 mb-4 sm:mb-6 ${
+            showFilters || !isMobile ? "block" : "hidden sm:block"
+          }`}
+        >
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
+            <div className="flex-1 relative">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+                size={isMobile ? 16 : 18}
+              />
+              <input
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Qidirish..."
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              />
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="relative flex-1 sm:flex-none">
+                <Filter
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+                  size={isMobile ? 14 : 16}
+                />
+                <select
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-auto pl-9 sm:pl-10 pr-8 py-2 sm:py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none"
+                >
+                  <option value="all">Barchasi</option>
+                  <option value="in_stock">Omborda</option>
+                  <option value="reserved">Zaxirada</option>
+                  <option value="sold">Sotilgan</option>
+                </select>
+              </div>
+              {!isMobile && (
+                <button className="p-2 sm:p-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                  <MoreVertical size={isMobile ? 16 : 18} />
+                </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* PAGINATION */}
+        {/* TABLE / GRID VIEW - Responsive */}
+        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+          {/* Desktop Table View */}
+          {viewMode === "table" && !isMobile ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
+                  <tr>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
+                      Telefon
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider hidden md:table-cell">
+                      IMEI
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
+                      Holat
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider hidden sm:table-cell">
+                      Narxlar
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider hidden lg:table-cell">
+                      Sana
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
+                      Amallar
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                  {paginatedPhones.length > 0 ? (
+                    paginatedPhones.map((phone) => (
+                      <tr
+                        key={phone.id}
+                        className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors"
+                      >
+                        <td className="px-4 sm:px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={phone.image}
+                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
+                              alt={phone.model}
+                            />
+                            <div>
+                              <p className="font-medium text-sm sm:text-base text-zinc-900 dark:text-white">
+                                {phone.model}
+                              </p>
+                              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                {phone.brand} • {phone.color}
+                              </p>
+                              <p className="text-xs text-zinc-500 dark:text-zinc-500 md:hidden">
+                                IMEI: {phone.imei.slice(0, 10)}...
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
+                          <div className="font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
+                            {phone.imei}
+                          </div>
+                        </td>
+                        <td className="px-4 sm:px-6 py-4">
+                          <StatusBadge
+                            status={phone.status}
+                            compact={isMobile}
+                          />
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 hidden sm:table-cell">
+                          <div className="space-y-1">
+                            <div className="text-xs text-zinc-600 dark:text-zinc-400">
+                              {phone.buyPrice.toLocaleString()} so'm
+                            </div>
+                            <div className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+                              {phone.sellPrice > 0
+                                ? `${phone.sellPrice.toLocaleString()} so'm`
+                                : "-"}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 hidden lg:table-cell">
+                          <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                            {phone.createdAt}
+                          </div>
+                        </td>
+                        <td className="px-4 sm:px-6 py-4">
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => setSelectedPhone(phone)}
+                              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400"
+                              title="Ko'rish"
+                            >
+                              <Eye size={14} className="sm:w-4 sm:h-4" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingPhone(phone);
+                                setOpenForm(true);
+                              }}
+                              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400"
+                              title="Tahrirlash"
+                            >
+                              <Edit2 size={14} className="sm:w-4 sm:h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(phone.id)}
+                              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400"
+                              title="O'chirish"
+                            >
+                              <Trash2 size={14} className="sm:w-4 sm:h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="px-4 sm:px-6 py-12 text-center"
+                      >
+                        <div className="flex flex-col items-center justify-center">
+                          <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-zinc-400 dark:text-zinc-600 mb-3" />
+                          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">
+                            Hech qanday telefon topilmadi
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            /* Mobile Grid View */
+            <div className="p-3 sm:p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-3 sm:gap-4">
+                {paginatedPhones.length > 0 ? (
+                  paginatedPhones.map((phone) => (
+                    <div
+                      key={phone.id}
+                      className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+                    >
+                      <div className="flex gap-3">
+                        <img
+                          src={phone.image}
+                          className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                          alt={phone.model}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="min-w-0">
+                              <h3 className="font-medium text-sm text-zinc-900 dark:text-white truncate">
+                                {phone.model}
+                              </h3>
+                              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                {phone.brand} • {phone.color}
+                              </p>
+                            </div>
+                            <StatusBadge status={phone.status} compact={true} />
+                          </div>
+
+                          <div className="space-y-1.5 mb-3">
+                            <div className="flex items-center gap-2 text-xs">
+                              <Barcode
+                                size={10}
+                                className="text-zinc-500 flex-shrink-0"
+                              />
+                              <span className="font-mono truncate">
+                                {phone.imei}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs">
+                              <Cpu
+                                size={10}
+                                className="text-zinc-500 flex-shrink-0"
+                              />
+                              <span>{phone.storage}GB</span>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                            <div>
+                              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                Sotish narxi
+                              </p>
+                              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                                {phone.sellPrice > 0
+                                  ? `${phone.sellPrice.toLocaleString()} so'm`
+                                  : "-"}
+                              </p>
+                            </div>
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => setSelectedPhone(phone)}
+                                className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400"
+                              >
+                                <Eye size={14} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setEditingPhone(phone);
+                                  setOpenForm(true);
+                                }}
+                                className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400"
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(phone.id)}
+                                className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-2 py-12 text-center">
+                    <Smartphone className="w-12 h-12 mx-auto text-zinc-400 dark:text-zinc-600 mb-3" />
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Hech qanday telefon topilmadi
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Tablet Grid View (md: ekranlar uchun) */}
+              <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {paginatedPhones.length > 0 &&
+                  paginatedPhones.map((phone) => (
+                    <PhoneCard
+                      key={phone.id}
+                      phone={phone}
+                      onView={setSelectedPhone}
+                      onEdit={() => {
+                        setEditingPhone(phone);
+                        setOpenForm(true);
+                      }}
+                      onDelete={() => handleDelete(phone.id)}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* PAGINATION - Responsive */}
         {totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-6 sm:mt-8">
-            <div className="text-sm text-zinc-600 dark:text-zinc-400">
-              Jami {filtered.length} ta telefon, {paginatedPhones.length} ta
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+            <div className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+              <span className="font-medium">{filtered.length}</span> ta natija,{" "}
+              <span className="font-medium">{paginatedPhones.length}</span> tasi
               ko'rsatilmoqda
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 sm:p-2 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={isMobile ? 16 : 18} />
               </button>
 
               <div className="flex gap-1">
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                  let page;
-                  if (totalPages <= 5) {
-                    page = i + 1;
-                  } else if (currentPage <= 3) {
-                    page = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    page = totalPages - 4 + i;
-                  } else {
-                    page = currentPage - 2 + i;
+                {Array.from(
+                  { length: Math.min(totalPages, isMobile ? 3 : 5) },
+                  (_, i) => {
+                    let page;
+                    if (totalPages <= (isMobile ? 3 : 5)) {
+                      page = i + 1;
+                    } else if (currentPage <= (isMobile ? 2 : 3)) {
+                      page = i + 1;
+                    } else if (currentPage >= totalPages - (isMobile ? 1 : 2)) {
+                      page = totalPages - (isMobile ? 2 : 4) + i;
+                    } else {
+                      page = currentPage - (isMobile ? 1 : 2) + i;
+                    }
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                          currentPage === page
+                            ? "bg-blue-600 text-white"
+                            : "border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
                   }
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === page
-                          ? "bg-blue-600 text-white"
-                          : "bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
+                )}
               </div>
 
               <button
@@ -489,9 +702,9 @@ export default function Inventory() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 sm:p-2 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={isMobile ? 16 : 18} />
               </button>
             </div>
           </div>
@@ -503,6 +716,7 @@ export default function Inventory() {
         <DetailModal
           phone={selectedPhone}
           onClose={() => setSelectedPhone(null)}
+          isMobile={isMobile}
         />
       )}
 
@@ -515,6 +729,7 @@ export default function Inventory() {
             setEditingPhone(null);
           }}
           onSubmit={handleSubmit}
+          isMobile={isMobile}
         />
       )}
     </div>
@@ -523,158 +738,320 @@ export default function Inventory() {
 
 /* ------------------ COMPONENTS ------------------ */
 
-function Stat({ label, value, icon }) {
+function Stat({ label, value, icon, subtitle, compact = false }) {
   return (
-    <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-300 dark:border-zinc-700 p-4 sm:p-5 transition-colors">
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-            {label}
-          </p>
-          <p className="text-lg sm:text-xl md:text-2xl font-bold mt-1">
+    <div
+      className={`bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 sm:p-4 ${
+        compact ? "" : "hover:border-zinc-300 dark:hover:border-zinc-700"
+      } transition-colors`}
+    >
+      <div className="flex justify-between items-start mb-2 sm:mb-3">
+        <div
+          className={`p-1.5 sm:p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 ${
+            compact ? "" : "sm:p-2.5"
+          }`}
+        >
+          {icon}
+        </div>
+      </div>
+      <div>
+        <p
+          className={`text-zinc-600 dark:text-zinc-400 mb-1 ${
+            compact ? "text-xs" : "text-sm"
+          }`}
+        >
+          {label}
+        </p>
+        <div className="flex items-baseline gap-1">
+          <p
+            className={`font-bold text-zinc-900 dark:text-white ${
+              compact ? "text-lg" : "text-xl sm:text-2xl"
+            }`}
+          >
             {value}
           </p>
+          {subtitle && (
+            <span className="text-xs text-zinc-500 dark:text-zinc-500">
+              {subtitle}
+            </span>
+          )}
         </div>
-        <div className="text-blue-600 dark:text-blue-400">{icon}</div>
       </div>
     </div>
   );
 }
 
-function StatusBadge({ status }) {
-  const colors = {
-    in_stock:
-      "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400",
-    reserved:
-      "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400",
-    sold: "bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300",
+function StatusBadge({ status, compact = false }) {
+  const config = {
+    in_stock: {
+      label: "Omborda",
+      className:
+        "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
+    },
+    reserved: {
+      label: "Zaxirada",
+      className:
+        "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
+    },
+    sold: {
+      label: "Sotilgan",
+      className:
+        "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-400",
+    },
   };
 
-  const labels = {
-    in_stock: "Omborda",
-    reserved: "Zaxira",
-    sold: "Sotilgan",
-  };
+  const { label, className } = config[status];
 
   return (
     <span
-      className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${colors[status]}`}
+      className={`inline-flex items-center gap-1 ${
+        compact ? "px-2 py-1 text-xs" : "px-2.5 py-1.5 text-xs"
+      } rounded-full font-medium ${className}`}
     >
-      {labels[status]}
+      <div
+        className={`rounded-full ${compact ? "w-1.5 h-1.5" : "w-2 h-2"}`}
+      ></div>
+      {label}
     </span>
   );
 }
 
-function DetailModal({ phone, onClose }) {
+function PhoneCard({ phone, onView, onEdit, onDelete }) {
+  return (
+    <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+      <div className="flex flex-col">
+        <div className="flex items-start justify-between mb-3">
+          <img
+            src={phone.image}
+            className="w-16 h-16 rounded-lg object-cover"
+            alt={phone.model}
+          />
+          <StatusBadge status={phone.status} />
+        </div>
+
+        <div className="mb-4">
+          <h3 className="font-medium text-zinc-900 dark:text-white mb-1">
+            {phone.model}
+          </h3>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+            {phone.brand} • {phone.color} • {phone.storage}GB
+          </p>
+          <div className="text-xs text-zinc-500 dark:text-zinc-500 font-mono">
+            {phone.imei}
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
+          <div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">Narx</p>
+            <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              {phone.sellPrice > 0
+                ? `${phone.sellPrice.toLocaleString()} so'm`
+                : "-"}
+            </p>
+          </div>
+          <div className="flex gap-1">
+            <button
+              onClick={() => onView(phone)}
+              className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+            >
+              <Eye size={14} />
+            </button>
+            <button
+              onClick={onEdit}
+              className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+            >
+              <Edit2 size={14} />
+            </button>
+            <button
+              onClick={onDelete}
+              className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailModal({ phone, onClose, isMobile }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
-      <div className="bg-white dark:bg-zinc-900 rounded-xl w-full max-w-md sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto border border-zinc-300 dark:border-zinc-800">
-        <div className="sticky top-0 flex justify-between items-center p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate">
-            {phone.model}
-          </h2>
-          <button onClick={onClose} className="hover:opacity-80 p-1">
-            <X size={20} className="sm:w-6 sm:h-6" />
+      <div
+        className={`bg-white dark:bg-zinc-900 rounded-xl w-full ${
+          isMobile ? "max-h-[90vh]" : "max-w-2xl"
+        } overflow-y-auto border border-zinc-200 dark:border-zinc-800`}
+      >
+        <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 p-4 sm:p-6 flex justify-between items-center">
+          <div className="flex-1 min-w-0">
+            <h2
+              className={`font-bold text-zinc-900 dark:text-white mb-1 ${
+                isMobile ? "text-lg" : "text-xl"
+              }`}
+            >
+              {phone.model}
+            </h2>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 truncate">
+              {phone.brand} • {phone.color} • {phone.storage}GB
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors ml-4 flex-shrink-0"
+          >
+            <X size={isMobile ? 18 : 20} />
           </button>
         </div>
 
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-            <img
-              src={phone.image}
-              alt={phone.model}
-              className="w-full sm:w-40 h-48 sm:h-40 rounded-lg object-cover"
-            />
-            <div className="flex-1 space-y-3 sm:space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <DetailRow
-                  label="Brend"
-                  value={phone.brand}
-                  icon={<Smartphone size={16} />}
-                />
-                <DetailRow
-                  label="Model"
-                  value={phone.model}
-                  icon={<Smartphone size={16} />}
-                />
+        <div className="p-4 sm:p-6">
+          <div
+            className={`${
+              isMobile ? "" : "grid grid-cols-1 lg:grid-cols-3 gap-6"
+            } mb-6`}
+          >
+            <div className={isMobile ? "mb-4" : "lg:col-span-1"}>
+              <img
+                src={phone.image}
+                alt={phone.model}
+                className={`w-full ${
+                  isMobile ? "h-48" : "h-64"
+                } rounded-xl object-cover`}
+              />
+            </div>
+            <div className={isMobile ? "" : "lg:col-span-2"}>
+              <div
+                className={`grid ${
+                  isMobile ? "grid-cols-1 gap-3" : "grid-cols-2 gap-4"
+                }`}
+              >
                 <DetailRow
                   label="IMEI"
                   value={phone.imei}
-                  icon={<Barcode size={16} />}
+                  icon={<Barcode size={isMobile ? 14 : 16} />}
+                  compact={isMobile}
                 />
                 <DetailRow
                   label="Rang"
                   value={phone.color}
-                  icon={<Palette size={16} />}
+                  icon={<Palette size={isMobile ? 14 : 16} />}
+                  compact={isMobile}
                 />
                 <DetailRow
                   label="Xotira"
                   value={`${phone.storage}GB`}
-                  icon={<Cpu size={16} />}
+                  icon={<Cpu size={isMobile ? 14 : 16} />}
+                  compact={isMobile}
                 />
                 <DetailRow
                   label="Holat"
-                  value={<StatusBadge status={phone.status} />}
-                  icon={<ShoppingCart size={16} />}
+                  value={
+                    <StatusBadge status={phone.status} compact={isMobile} />
+                  }
+                  icon={<ShoppingCart size={isMobile ? 14 : 16} />}
+                  compact={isMobile}
+                />
+              </div>
+              <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                <DetailRow
+                  label="Qo'shilgan sana"
+                  value={phone.createdAt}
+                  icon={<Calendar size={isMobile ? 14 : 16} />}
+                  compact={isMobile}
                 />
               </div>
             </div>
           </div>
 
-          <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 sm:pt-6">
-            <h3 className="font-semibold mb-3 sm:mb-4 text-base sm:text-lg">
+          <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-4 sm:p-5">
+            <h3
+              className={`font-semibold text-zinc-900 dark:text-white mb-3 ${
+                isMobile ? "text-base" : ""
+              }`}
+            >
               Narx ma'lumotlari
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div className="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg">
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            <div
+              className={`grid ${
+                isMobile
+                  ? "grid-cols-1 gap-3"
+                  : "grid-cols-1 md:grid-cols-3 gap-4"
+              }`}
+            >
+              <div className="p-3 sm:p-4 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-1">
                   Sotib olish narxi
                 </p>
-                <p className="text-lg sm:text-xl font-bold mt-1">
+                <p
+                  className={`font-bold text-zinc-900 dark:text-white ${
+                    isMobile ? "text-base" : "text-lg"
+                  }`}
+                >
                   {phone.buyPrice.toLocaleString()} so'm
                 </p>
               </div>
-              <div className="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg">
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              <div className="p-3 sm:p-4 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-1">
                   Sotish narxi
                 </p>
-                <p className="text-lg sm:text-xl font-bold mt-1 text-green-600 dark:text-green-400">
+                <p
+                  className={`font-bold text-emerald-600 dark:text-emerald-400 ${
+                    isMobile ? "text-base" : "text-lg"
+                  }`}
+                >
                   {phone.sellPrice > 0
                     ? `${phone.sellPrice.toLocaleString()} so'm`
-                    : "-"}
+                    : "Narx belgilanmagan"}
                 </p>
               </div>
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg col-span-1 sm:col-span-2">
-                <p className="text-sm text-blue-600 dark:text-blue-400">
+              <div className="p-3 sm:p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                <p className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 mb-1">
                   Foyda
                 </p>
-                <p className="text-xl sm:text-2xl font-bold mt-1 text-blue-600 dark:text-blue-400">
+                <p
+                  className={`font-bold text-blue-600 dark:text-blue-400 ${
+                    isMobile ? "text-base" : "text-lg"
+                  }`}
+                >
                   {(phone.sellPrice - phone.buyPrice).toLocaleString()} so'm
                 </p>
               </div>
             </div>
           </div>
-
-          <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 sm:pt-6">
-            <DetailRow
-              label="Qo'shilgan sana"
-              value={phone.createdAt}
-              icon={<Calendar size={16} />}
-            />
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function DetailRow({ label, value, icon }) {
+function DetailRow({ label, value, icon, compact = false }) {
   return (
-    <div className="flex items-center gap-3 py-2">
-      <div className="text-zinc-500">{icon}</div>
-      <div className="flex-1">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">{label}</p>
-        <p className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
+    <div
+      className={`flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 ${
+        compact ? "" : ""
+      }`}
+    >
+      <div
+        className={`p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 ${
+          compact ? "" : ""
+        }`}
+      >
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p
+          className={`text-zinc-600 dark:text-zinc-400 ${
+            compact ? "text-xs" : "text-sm"
+          }`}
+        >
+          {label}
+        </p>
+        <p
+          className={`font-medium text-zinc-900 dark:text-white truncate ${
+            compact ? "text-sm" : ""
+          }`}
+        >
           {value}
         </p>
       </div>
@@ -682,7 +1059,7 @@ function DetailRow({ label, value, icon }) {
   );
 }
 
-function PhoneForm({ initial, onSubmit, onClose }) {
+function PhoneForm({ initial, onSubmit, onClose, isMobile }) {
   const [data, setData] = useState(
     initial || {
       model: "",
@@ -710,13 +1087,24 @@ function PhoneForm({ initial, onSubmit, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
-      <div className="bg-white dark:bg-zinc-900 rounded-xl w-full max-w-md sm:max-w-lg max-h-[90vh] overflow-y-auto border border-zinc-300 dark:border-zinc-800">
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 sm:p-6 flex justify-between items-center">
-          <h2 className="text-lg sm:text-xl font-bold">
-            {initial ? "Tahrirlash" : "Yangi telefon"}
+      <div
+        className={`bg-white dark:bg-zinc-900 rounded-xl w-full ${
+          isMobile ? "max-h-[90vh]" : "max-w-md"
+        } overflow-y-auto border border-zinc-200 dark:border-zinc-800`}
+      >
+        <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 p-4 sm:p-6 flex justify-between items-center">
+          <h2
+            className={`font-bold text-zinc-900 dark:text-white ${
+              isMobile ? "text-lg" : "text-xl"
+            }`}
+          >
+            {initial ? "Telefonni tahrirlash" : "Yangi telefon"}
           </h2>
-          <button onClick={onClose} className="hover:opacity-80 p-1">
-            <X size={20} className="sm:w-6 sm:h-6" />
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors ml-4 flex-shrink-0"
+          >
+            <X size={isMobile ? 18 : 20} />
           </button>
         </div>
 
@@ -725,45 +1113,124 @@ function PhoneForm({ initial, onSubmit, onClose }) {
             e.preventDefault();
             onSubmit(data);
           }}
-          className="p-4 sm:p-6 space-y-3 sm:space-y-4"
+          className="p-4 sm:p-6 space-y-4"
         >
-          {[
-            { name: "model", placeholder: "Model" },
-            { name: "brand", placeholder: "Brend" },
-            { name: "color", placeholder: "Rangi" },
-            { name: "storage", placeholder: "Xotira (GB)", type: "number" },
-            { name: "imei", placeholder: "IMEI" },
-            {
-              name: "buyPrice",
-              placeholder: "Sotib olish narxi",
-              type: "number",
-            },
-            { name: "sellPrice", placeholder: "Sotish narxi", type: "number" },
-          ].map((f) => (
-            <div key={f.name}>
+          <div
+            className={`grid ${
+              isMobile ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
+            } gap-3 sm:gap-4`}
+          >
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                Model
+              </label>
               <input
-                type={f.type || "text"}
-                name={f.name}
-                placeholder={f.placeholder}
-                value={data[f.name]}
+                type="text"
+                name="model"
+                placeholder="iPhone 13"
+                value={data.model}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                required={["model", "brand", "imei"].includes(f.name)}
+                className="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                required
               />
             </div>
-          ))}
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                Brend
+              </label>
+              <input
+                type="text"
+                name="brand"
+                placeholder="Apple"
+                value={data.brand}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                Xotira (GB)
+              </label>
+              <input
+                type="number"
+                name="storage"
+                placeholder="128"
+                value={data.storage}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                Rang
+              </label>
+              <input
+                type="text"
+                name="color"
+                placeholder="Midnight"
+                value={data.color}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                required
+              />
+            </div>
+            <div className={isMobile ? "" : "sm:col-span-2"}>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                IMEI raqami
+              </label>
+              <input
+                type="text"
+                name="imei"
+                placeholder="353245110012345"
+                value={data.imei}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-mono"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                Sotib olish narxi
+              </label>
+              <input
+                type="number"
+                name="buyPrice"
+                placeholder="6800000"
+                value={data.buyPrice}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                Sotish narxi
+              </label>
+              <input
+                type="number"
+                name="sellPrice"
+                placeholder="8500000"
+                value={data.sellPrice}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                required
+              />
+            </div>
+          </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
+          <div className="flex gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 sm:py-3 rounded-lg font-semibold bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors text-sm sm:text-base"
+              className="flex-1 py-2.5 rounded-lg font-medium border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition-colors text-sm"
             >
               Bekor qilish
             </button>
             <button
               type="submit"
-              className="flex-1 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all text-sm sm:text-base"
+              className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm"
             >
               Saqlash
             </button>

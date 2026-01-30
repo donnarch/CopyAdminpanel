@@ -35,8 +35,8 @@ export function TopProducts({ products, formatMoney, darkMode = true }) {
               p-3 sm:p-4 rounded-lg transition-all duration-200 border
               ${
                 darkMode
-                  ? "border-gray-700/50 hover:bg-gray-800/50"
-                  : "border-gray-200 hover:bg-gray-100/50"
+                  ? "border-gray-700/50 cursor-pointer hover:lift hover:shadow-md hover:bg-zinc-900"
+                  : "border-gray-200 cursor-pointer hover:lift hover:shadow-md hover:bg-zinc-100 "
               }
             `}
           >
@@ -44,12 +44,12 @@ export function TopProducts({ products, formatMoney, darkMode = true }) {
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div
                 className={`
-                w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-white 
+                w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold 
                 flex-shrink-0 shadow-lg transition-transform hover:scale-105
                 ${
                   darkMode
-                    ? "bg-gradient-to-br from-blue-500 to-purple-600"
-                    : "bg-gradient-to-br from-blue-400 to-purple-500"
+                    ? "bg-gradient-to-br "
+                    : "bg-gradient-to-br "
                 }
               `}
               >

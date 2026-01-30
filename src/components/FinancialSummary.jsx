@@ -23,7 +23,7 @@ export function FinancialSummary({
         {financialData.map((item, idx) => (
           <div
             key={idx}
-            className="p-3 sm:p-4 hover:bg-gray-800/30 rounded-lg transition-colors duration-200"
+            className="p-3 sm:p-4  rounded-lg transition-colors duration-200 cursor-pointer hover:lift hover:shadow-md bg-gradient-to-r"
           >
             <div className="flex items-center justify-between gap-2 sm:gap-4">
               <div className="flex-1 min-w-0">

@@ -31,7 +31,7 @@ export function PerformanceMetrics({ data, darkMode = true }) {
                 p-3 sm:p-4 rounded-lg border transition-colors duration-200
                 ${
                   darkMode
-                    ? "bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60"
+                    ? " border-zinc-800/50 hover:bg-zinc-800/60"
                     : "bg-white/50 border-gray-200 hover:bg-gray-50"
                 }
               `}

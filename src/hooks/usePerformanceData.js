@@ -14,7 +14,7 @@ export const usePerformanceData = (stats) => {
     {
       metric: "O'rtacha buyurtma",
       value: formatMoney(stats.avgOrderValue),
-      change: "+5.2%",
+      change: "",
       trend: "up",
       icon: CreditCard,
       color: "text-blue-400",

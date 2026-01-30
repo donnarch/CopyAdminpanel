@@ -170,7 +170,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
             {/* ========== Dropdown Menu ========== */}
             {showUserMenu && (
-              <div className="absolute bottom-full left-0 right-0 mb-2 z-50 bg-white dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-800 shadow-lg overflow-hidden">
+              <div className="absolute bottom-full left-0 right-0 mb-2 z-50 bg-white dark:bg-zinc-900 rounded-lg border border-gray-300 dark:border-gray-800 shadow-lg overflow-hidden">
                 <button
                   onClick={() => {
                     setShowUserMenu(false);
